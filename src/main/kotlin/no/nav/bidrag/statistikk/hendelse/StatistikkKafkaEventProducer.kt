@@ -18,13 +18,12 @@ class DefaultStatistikkKafkaEventProducer(
 ) : StatistikkKafkaEventProducer {
 
     override fun publishForskudd(forskuddHendelse: ForskuddHendelse) {
-
         val headers = listOf(RecordHeader("type", "FORSKUDD".toByteArray()))
         val record = ProducerRecord(topic, null, forskuddHendelse.vedtaksid.toString(), objectMapper.writeValueAsString(forskuddHendelse), headers)
 
         try {
             kafkaTemplate?.send(
-                record
+                record,
             )?.get()
         } catch (e: JsonProcessingException) {
             throw IllegalStateException(e.message, e)
