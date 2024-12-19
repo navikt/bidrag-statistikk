@@ -66,7 +66,7 @@ spec:
     - name: TOPIC_VEDTAK
       value: {{ kafka-topic-vedtak }}
     - name: TOPIC_STATISTIKK
-      value: { { kafka-topic-statistikk } }
+      value: {{ kafka-topic-statistikk }}
     - name: BIDRAG_VEDTAK_URL
       value: https://{{ azure.bidrag_vedtak_url }}/bidrag-vedtak
     - name: BIDRAG_VEDTAK_SCOPE
