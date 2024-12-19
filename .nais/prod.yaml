@@ -5,7 +5,7 @@ kafka:
   pool: nav-prod
 kafka-topic-vedtak: bidrag.vedtak
 kafka-topic-statistikk: bidrag.statistikk
-spring-profiles: live,nais,database-legacy
+spring-profiles: live,nais
 azure:
   bidrag_vedtak_url: bidrag-vedtak.intern.nav.no
   bidrag_vedtak_scope: prod-gcp.bidrag.bidrag-vedtak
