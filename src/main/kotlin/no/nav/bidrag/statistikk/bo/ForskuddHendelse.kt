@@ -29,4 +29,3 @@ data class Inntekt(
     val type: String,
     val beløp: BigDecimal,
 )
-

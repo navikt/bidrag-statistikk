@@ -2,12 +2,10 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.statistikk.SECURE_LOGGER
-import no.nav.bidrag.transport.behandling.vedtak.Stønadsendring
 import no.nav.bidrag.transport.behandling.vedtak.VedtakHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 private val LOGGER = LoggerFactory.getLogger(DefaultBehandleHendelseService::class.java)
 
@@ -24,7 +22,6 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
 
         if (vedtakstypeTilStatikk(vedtakHendelse.type)) {
             statistikkService.behandleVedtakshendelse(vedtakHendelse)
-
         }
     }
 

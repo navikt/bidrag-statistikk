@@ -2,11 +2,10 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
-import no.nav.bidrag.domene.enums.person.Sivilstandskode
-import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
 import no.nav.bidrag.statistikk.bo.ForskuddHendelse
 import no.nav.bidrag.statistikk.bo.ForskuddPeriode
 import no.nav.bidrag.statistikk.bo.Inntekt
+import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
 import no.nav.bidrag.transport.behandling.felles.grunnlag.BostatusPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBarnIHusstand
 import no.nav.bidrag.transport.behandling.felles.grunnlag.GrunnlagDto
@@ -16,10 +15,8 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnSluttberegningIReferanser
 import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjekt
-import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjektListe
 import no.nav.bidrag.transport.behandling.vedtak.VedtakHendelse
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
-import no.nav.bidrag.transport.behandling.vedtak.response.VedtakPeriodeDto
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,7 +28,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
-
         val vedtak = hentVedtak(vedtakHendelse.id.toLong())
 
         vedtak?.stønadsendringListe?.forEach { stønadsendring ->
@@ -45,7 +41,15 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     val grunnlagsdata = finnGrunnlagsdata(vedtak.grunnlagListe.toList(), periode.grunnlagReferanseListe)
                     ForskuddPeriode(
                         periodeFra = LocalDate.of(periode.periode.fom.year, periode.periode.fom.month, 1),
-                        periodeTil = if (periode.periode.til == null) null else LocalDate.of(periode.periode.til!!.year, periode.periode.til!!.month, 1),
+                        periodeTil = if (periode.periode.til == null) {
+                            null
+                        } else {
+                            LocalDate.of(
+                                periode.periode.til!!.year,
+                                periode.periode.til!!.month,
+                                1,
+                            )
+                        },
                         beløp = periode.beløp,
                         resultat = periode.resultatkode,
                         barnetsAldersgruppe = grunnlagsdata.barnetsAldersgruppe!!,
@@ -58,9 +62,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
             hendelserService.opprettHendelse(forskuddHendelse)
         }
-
     }
-
 
     fun hentVedtak(vedtaksid: Long): VedtakDto? {
         return bidragVedtakConsumer.hentVedtak(vedtaksid)
@@ -86,7 +88,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
         return respons
     }
-
 
     fun List<GrunnlagDto>.finnBarnetsAldersgruppeForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): String? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
@@ -146,7 +147,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         }
     }
-
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(StatistikkService::class.java)

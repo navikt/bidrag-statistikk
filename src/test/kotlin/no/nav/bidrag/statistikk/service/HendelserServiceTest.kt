@@ -2,24 +2,12 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.inntekt.Inntektsrapportering
 import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
-import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
-import no.nav.bidrag.domene.enums.vedtak.Innkrevingstype
-import no.nav.bidrag.domene.enums.vedtak.Stønadstype
-import no.nav.bidrag.domene.enums.vedtak.Vedtakskilde
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
-import no.nav.bidrag.domene.ident.Personident
-import no.nav.bidrag.domene.organisasjon.Enhetsnummer
-import no.nav.bidrag.domene.sak.Saksnummer
-import no.nav.bidrag.domene.tid.ÅrMånedsperiode
 import no.nav.bidrag.statistikk.BidragStatistikkTest
 import no.nav.bidrag.statistikk.bo.ForskuddHendelse
 import no.nav.bidrag.statistikk.bo.ForskuddPeriode
 import no.nav.bidrag.statistikk.bo.Inntekt
 import no.nav.bidrag.statistikk.hendelse.StatistikkKafkaEventProducer
-import no.nav.bidrag.transport.behandling.vedtak.request.OpprettEngangsbeløpRequestDto
-import no.nav.bidrag.transport.behandling.vedtak.request.OpprettPeriodeRequestDto
-import no.nav.bidrag.transport.behandling.vedtak.request.OpprettStønadsendringRequestDto
-import no.nav.bidrag.transport.behandling.vedtak.request.OpprettVedtakRequestDto
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -68,16 +56,14 @@ class HendelserServiceTest {
                         inntektListe = listOf(
                             Inntekt(
                                 beløp = BigDecimal.valueOf(10000),
-                                type = Inntektsrapportering.AINNTEKT_BEREGNET_12MND.name
-                            )
-                        )
-                    )
-                )
-            )
+                                type = Inntektsrapportering.AINNTEKT_BEREGNET_12MND.name,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         verify(vedtakEventProducerMock).publish(anyOrNull())
     }
-
-
 }

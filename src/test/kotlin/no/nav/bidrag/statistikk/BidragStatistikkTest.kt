@@ -11,7 +11,9 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootApplication(exclude = [SecurityAutoConfiguration::class, ManagementWebSecurityAutoConfiguration::class])
 @ActiveProfiles(TEST_PROFILE)
-@ComponentScan(excludeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = [BidragStatistikk::class, BidragStatistikkLocal::class])])
+@ComponentScan(
+    excludeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = [BidragStatistikk::class, BidragStatistikkLocal::class])],
+)
 class BidragStatistikkTest {
     companion object {
         const val TEST_PROFILE = "test"

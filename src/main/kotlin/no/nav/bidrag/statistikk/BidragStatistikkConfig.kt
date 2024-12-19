@@ -109,4 +109,3 @@ class KafkaConfig {
         Optional.empty<Any>()
     }
 }
-
