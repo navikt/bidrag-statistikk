@@ -2,9 +2,6 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
-import no.nav.bidrag.statistikk.bo.ForskuddHendelse
-import no.nav.bidrag.statistikk.bo.ForskuddPeriode
-import no.nav.bidrag.statistikk.bo.Inntekt
 import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
 import no.nav.bidrag.transport.behandling.felles.grunnlag.BostatusPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBarnIHusstand
@@ -15,6 +12,9 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnSluttberegningIReferanser
 import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjekt
+import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
+import no.nav.bidrag.transport.behandling.statistikk.ForskuddPeriode
+import no.nav.bidrag.transport.behandling.statistikk.Inntekt
 import no.nav.bidrag.transport.behandling.vedtak.VedtakHendelse
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import org.slf4j.LoggerFactory
@@ -140,7 +140,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                         it.referanse,
                     )
             }
-        return inntekter.innholdTilObjekt<InntektsrapporteringPeriode>()?.map { inntekt ->
+        return inntekter.innholdTilObjekt<InntektsrapporteringPeriode>().map { inntekt ->
             Inntekt(
                 type = inntekt.inntektsrapportering.name,
                 beløp = inntekt.beløp,

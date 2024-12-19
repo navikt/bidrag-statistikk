@@ -4,10 +4,10 @@ import no.nav.bidrag.domene.enums.inntekt.Inntektsrapportering
 import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.statistikk.BidragStatistikkTest
-import no.nav.bidrag.statistikk.bo.ForskuddHendelse
-import no.nav.bidrag.statistikk.bo.ForskuddPeriode
-import no.nav.bidrag.statistikk.bo.Inntekt
 import no.nav.bidrag.statistikk.hendelse.StatistikkKafkaEventProducer
+import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
+import no.nav.bidrag.transport.behandling.statistikk.ForskuddPeriode
+import no.nav.bidrag.transport.behandling.statistikk.Inntekt
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -64,6 +64,6 @@ class HendelserServiceTest {
             ),
         )
 
-        verify(vedtakEventProducerMock).publish(anyOrNull())
+        verify(vedtakEventProducerMock).publishForskudd(anyOrNull())
     }
 }

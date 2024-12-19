@@ -2,11 +2,13 @@ package no.nav.bidrag.statistikk.hendelse
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.bidrag.statistikk.bo.ForskuddHendelse
+import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.header.internals.RecordHeader
 import org.springframework.kafka.core.KafkaTemplate
 
 interface StatistikkKafkaEventProducer {
-    fun publish(forskuddHendelse: ForskuddHendelse)
+    fun publishForskudd(forskuddHendelse: ForskuddHendelse)
 }
 
 class DefaultStatistikkKafkaEventProducer(
@@ -15,12 +17,14 @@ class DefaultStatistikkKafkaEventProducer(
     private val topic: String,
 ) : StatistikkKafkaEventProducer {
 
-    override fun publish(forskuddHendelse: ForskuddHendelse) {
+    override fun publishForskudd(forskuddHendelse: ForskuddHendelse) {
+
+        val headers = listOf(RecordHeader("type", "FORSKUDD".toByteArray()))
+        val record = ProducerRecord(topic, null, forskuddHendelse.vedtaksid.toString(), objectMapper.writeValueAsString(forskuddHendelse), headers)
+
         try {
             kafkaTemplate?.send(
-                topic,
-                forskuddHendelse.vedtaksid.toString(),
-                objectMapper.writeValueAsString(forskuddHendelse),
+                record
             )?.get()
         } catch (e: JsonProcessingException) {
             throw IllegalStateException(e.message, e)
