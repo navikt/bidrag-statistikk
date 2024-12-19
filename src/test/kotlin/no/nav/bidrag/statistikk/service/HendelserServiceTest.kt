@@ -31,7 +31,7 @@ class HendelserServiceTest {
     private lateinit var hendelserService: HendelserService
 
     @MockBean
-    private lateinit var vedtakEventProducerMock: StatistikkKafkaEventProducer
+    private lateinit var statistikkEventProducerMock: StatistikkKafkaEventProducer
 
     @Test
     @Suppress("NonAsciiCharacters")
@@ -64,6 +64,6 @@ class HendelserServiceTest {
             ),
         )
 
-        verify(vedtakEventProducerMock).publishForskudd(anyOrNull())
+        verify(statistikkEventProducerMock).publishForskudd(anyOrNull())
     }
 }
