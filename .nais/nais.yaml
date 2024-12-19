@@ -28,7 +28,7 @@ spec:
       {{/each}}
     outbound:
       external:
-        - host: {{ azure.bidrag_organisasjon_url }}
+        - host: {{ azure.bidrag_vedtak_url }}
   image: {{ image }}
   kafka:
     pool: {{ kafka.pool }}
@@ -62,22 +62,14 @@ spec:
   {{#each ingresses as |url|}}
      - {{url}}
   {{/each}}
-  gcp:
-    sqlInstances:
-      - name: {{ dbname }}
-        type: POSTGRES_15
-        databases:
-          - name: {{ dbname }}
-            envVarPrefix: DB
-        tier: {{ spec.gcp.sqlInstances.tier }}
-        pointInTimeRecovery: {{ spec.gcp.sqlInstances.pointInTimeRecovery }}
-        diskAutoresize: {{ spec.gcp.sqlInstances.diskAutoresize }}
   env:
     - name: TOPIC_VEDTAK
       value: {{ kafka-topic-vedtak }}
-    - name: BIDRAG_ORGANISASJON_URL
-      value: https://{{ azure.bidrag_organisasjon_url }}/bidrag-organisasjon
-    - name: BIDRAG_ORGANISASJON_SCOPE
-      value: {{ azure.bidrag_organisasjon_scope }}
+    - name: TOPIC_STATISTIKK
+      value: { { kafka-topic-statistikk } }
+    - name: BIDRAG_VEDTAK_URL
+      value: https://{{ azure.bidrag_vedtak_url }}/bidrag-vedtak
+    - name: BIDRAG_VEDTAK_SCOPE
+      value: {{ azure.bidrag_vedtak_scope }}
     - name: SPRING_PROFILES_ACTIVE
       value: {{ spring-profiles }}

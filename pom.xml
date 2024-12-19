@@ -11,11 +11,11 @@
   </parent>
 
   <groupId>no.nav.bidrag</groupId>
-  <artifactId>bidrag-vedtak</artifactId>
+  <artifactId>bidrag-statistikk</artifactId>
   <version>0.0.19-SNAPSHOT</version>
 
-  <name>bidrag-vedtak</name>
-  <description>Behandling av vedtak i Bidrag</description>
+  <name>bidrag-statistikk</name>
+  <description>Behandling av statistikk i Bidrag</description>
 
   <properties>
 
