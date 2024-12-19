@@ -79,6 +79,10 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
@@ -105,6 +109,12 @@
       <version>${jackson-datatype-jsr310.version}</version>
     </dependency>
 
+    <!-- nav -->
+<!--    <dependency>
+      <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-transport-felles</artifactId>
+      <version>${bidrag-felles.version}</version>
+    </dependency>-->
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
@@ -136,6 +146,17 @@
       <version>${token-support.version}</version>
     </dependency>
 
+    <!-- Database -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
