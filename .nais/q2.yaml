@@ -7,7 +7,7 @@ kafka-topic-vedtak: bidrag.vedtak-q2
 kafka-topic-statistikk: bidrag.statistikk-q2
 spring-profiles: live,nais,database-new
 azure:
-  bidrag_vedtak_url: http://bidrag-vedtak-q2
+  bidrag_vedtak_url: http://bidrag-vedtak-q2.intern.dev.nav.no
   bidrag_vedtak_scope: dev-gcp.bidrag.bidrag-vedtak-q2
 outbound-access-apps:
   - bidrag-vedtak
