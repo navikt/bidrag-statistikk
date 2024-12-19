@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
-@SpringBootApplication(exclude = [SecurityAutoConfiguration::class, ManagementWebSecurityAutoConfiguration::class])
+@SpringBootApplication(
+    exclude = [SecurityAutoConfiguration::class, ManagementWebSecurityAutoConfiguration::class, DataSourceAutoConfiguration::class],
+)
 class BidragStatistikk
 
 const val ISSUER = "aad"
