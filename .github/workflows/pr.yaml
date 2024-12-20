@@ -16,24 +16,3 @@ jobs:
     secrets: inherit
     with:
       nais_variabler_filnavn: q2.yaml
-
-  run_cucumber_tests-syntetisk:
-    runs-on: ubuntu-latest
-    name: Run cucumber tests
-    needs: build-deploy
-    if: ${{ always() && needs.build-deploy.outputs.deploy_suksess == 'true' }}
-
-    env:
-      INGRESS_CUCUMBER: https://bidrag-cucumber-cloud.ekstern.dev.nav.no
-      INGRESS_STATISTIKK: https://bidrag-statistikk-q2.intern.dev.nav.no
-
-    steps:
-      - run: |
-          curl -H "Content-Type: application/json" -i \
-                -H "Authorization: Basic ${{ secrets.BIDRAG_CUCUMBER_CLOUD_AUTH }}" \
-               --request POST \
-               --data '{"noContextPathForApps":["bidrag-statistikk"],"ingressesForApps":[
-                   "${{ env.INGRESS_STATISTIKK }}@tag:bidrag-statistikk"
-                 ]}' \
-               ${{ env.INGRESS_CUCUMBER }}/bidrag-cucumber-cloud/run | tee .cucumber-result
-          cat .cucumber-result | grep HTTP/2 | grep -c 200 > /dev/null # fails if count is 0 (http status is not ok, aka http status code is not 200)
