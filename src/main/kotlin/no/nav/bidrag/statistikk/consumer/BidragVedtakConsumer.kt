@@ -10,10 +10,8 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class BidragVedtakConsumer(
-    @Value("\${BIDRAG_VEDTAK_URL}") private val bidragVedtakUrl: URI,
-    @Qualifier("azure") restTemplate: RestTemplate,
-) : AbstractRestClient(restTemplate, "bidrag-vedtak") {
+class BidragVedtakConsumer(@Value("\${BIDRAG_VEDTAK_URL}") private val bidragVedtakUrl: URI, @Qualifier("azure") restTemplate: RestTemplate) :
+    AbstractRestClient(restTemplate, "bidrag-vedtak") {
     private val bidragVedtakUri
         get() = UriComponentsBuilder.fromUri(bidragVedtakUrl).pathSegment("vedtak")
 
