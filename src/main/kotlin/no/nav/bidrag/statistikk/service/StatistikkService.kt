@@ -85,7 +85,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             respons.barnBorMedBM == null ||
             respons.inntektListe == null
         ) {
-            throw Exception("Klarte ikke å hente grunnlagsdata for forskuddsvedtak")
+            throw Exception("Klarte ikke å hente grunnlagsdata for forskuddsvedtak, $respons")
         }
 
         return respons
