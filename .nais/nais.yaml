@@ -20,8 +20,10 @@ spec:
           - "azp_name"
   accessPolicy:
     outbound:
-      external:
-        - host: {{ azure.bidrag_vedtak_url }}
+      rules:
+      {{#each outbound-access-apps}}
+          - application: {{this}}
+      {{/each}}
   image: {{ image }}
   kafka:
     pool: {{ kafka.pool }}
@@ -56,13 +58,7 @@ spec:
      - {{url}}
   {{/each}}
   env:
-    - name: TOPIC_VEDTAK
-      value: {{ kafka-topic-vedtak }}
-    - name: TOPIC_STATISTIKK
-      value: {{ kafka-topic-statistikk }}
-    - name: BIDRAG_VEDTAK_URL
-      value: https://{{ azure.bidrag_vedtak_url }}/bidrag-vedtak
-    - name: BIDRAG_VEDTAK_SCOPE
-      value: {{ azure.bidrag_vedtak_scope }}
-    - name: SPRING_PROFILES_ACTIVE
-      value: {{ spring-profiles }}
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}
