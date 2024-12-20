@@ -2,6 +2,7 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
+import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
 import no.nav.bidrag.transport.behandling.felles.grunnlag.BostatusPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBarnIHusstand
@@ -30,6 +31,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
         val vedtak = hentVedtak(vedtakHendelse.id.toLong())
+
+        SECURE_LOGGER.info("Vedtak hentet for vedtakshendelse med id ${vedtakHendelse.id} vedtak: $vedtak")
 
         vedtak?.stønadsendringListe?.forEach { stønadsendring ->
             val forskuddHendelse = ForskuddHendelse(
