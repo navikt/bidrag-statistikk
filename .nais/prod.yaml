@@ -3,12 +3,12 @@ ingresses:
   - https://bidrag-statistikk.intern.nav.no
 kafka:
   pool: nav-prod
-kafka-topic-vedtak: bidrag.vedtak
-kafka-topic-statistikk: bidrag.statistikk
-spring-profiles: live,nais
-azure:
-  bidrag_vedtak_url: bidrag-vedtak.intern.nav.no
-  bidrag_vedtak_scope: prod-gcp.bidrag.bidrag-vedtak
+env:
+  SPRING_PROFILES_ACTIVE: live,nais
+  BIDRAG_VEDTAK_URL: http://bidrag-vedtak
+  BIDRAG_VEDTAK_SCOPE: prod-gcp.bidrag.bidrag-vedtak
+  TOPIC_STATISTIKK: bidrag.statistikk
+  TOPIC_VEDTAK: bidrag.vedtak
 outbound-access-apps:
   - bidrag-vedtak
 spec:

@@ -10,6 +10,7 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.Grunnlagsreferanse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.InntektsrapporteringPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
+import no.nav.bidrag.transport.behandling.felles.grunnlag.finnOgKonverterGrunnlagSomErReferertAv
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnSluttberegningIReferanser
 import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjekt
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
@@ -64,9 +65,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         }
     }
 
-    fun hentVedtak(vedtaksid: Long): VedtakDto? {
-        return bidragVedtakConsumer.hentVedtak(vedtaksid)
-    }
+    fun hentVedtak(vedtaksid: Long): VedtakDto? = bidragVedtakConsumer.hentVedtak(vedtaksid)
 
     private fun finnGrunnlagsdata(grunnlagListe: List<GrunnlagDto>, grunnlagsreferanseListe: List<Grunnlagsreferanse>): GrunnlagsdataForskudd {
         // Finn grunnlagsdata
@@ -97,53 +96,41 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     fun List<GrunnlagDto>.finnAntallBarnIEgenHusstandForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Double? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-        val antallBarnIEgenHusstandPeriode =
-            find {
-                it.type == Grunnlagstype.DELBEREGNING_BARN_I_HUSSTAND &&
-                    sluttberegning.grunnlagsreferanseListe.contains(
-                        it.referanse,
-                    )
-            }
-        return antallBarnIEgenHusstandPeriode?.innholdTilObjekt<DelberegningBarnIHusstand>()?.antallBarn
+        val antallBarnIEgenHusstandPeriode = finnOgKonverterGrunnlagSomErReferertAv<DelberegningBarnIHusstand>(
+            Grunnlagstype.DELBEREGNING_BARN_I_HUSSTAND,
+            sluttberegning,
+        ).firstOrNull()
+        return antallBarnIEgenHusstandPeriode?.innhold?.antallBarn
     }
 
     fun List<GrunnlagDto>.finnSivilstandForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): String? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-        val sivilstandPeriode =
-            find {
-                it.type == Grunnlagstype.SIVILSTAND_PERIODE &&
-                    sluttberegning.grunnlagsreferanseListe.contains(
-                        it.referanse,
-                    )
-            }
-        return sivilstandPeriode?.innholdTilObjekt<SivilstandPeriode>()?.sivilstand?.name
+        val sivilstandPeriode = finnOgKonverterGrunnlagSomErReferertAv<SivilstandPeriode>(
+            Grunnlagstype.SIVILSTAND_PERIODE,
+            sluttberegning,
+        ).firstOrNull()
+        return sivilstandPeriode?.innhold?.sivilstand?.name
     }
 
     fun List<GrunnlagDto>.finnOmBarnBorMedBMIPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Boolean? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-        val bostatusPeriode =
-            find {
-                it.type == Grunnlagstype.BOSTATUS_PERIODE &&
-                    sluttberegning.grunnlagsreferanseListe.contains(
-                        it.referanse,
-                    )
-            }
-        return bostatusPeriode?.innholdTilObjekt<BostatusPeriode>()?.bostatus == Bostatuskode.MED_FORELDER
+        val bostatusPeriode = finnOgKonverterGrunnlagSomErReferertAv<BostatusPeriode>(
+            Grunnlagstype.BOSTATUS_PERIODE,
+            sluttberegning,
+        ).firstOrNull()
+        return bostatusPeriode?.innhold?.bostatus == Bostatuskode.MED_FORELDER
     }
 
     fun List<GrunnlagDto>.finnInntekter(grunnlagsreferanseListe: List<Grunnlagsreferanse>): List<Inntekt>? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-        val inntekter =
-            filter {
-                it.type == Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE &&
-                    sluttberegning.grunnlagsreferanseListe.contains(
-                        it.referanse,
-                    )
-            }
-        return inntekter.innholdTilObjekt<InntektsrapporteringPeriode>().map { inntekt ->
+        val inntekter = finnOgKonverterGrunnlagSomErReferertAv<InntektsrapporteringPeriode>(
+            Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE,
+            sluttberegning,
+        )
+        return inntekter.map { inntekt ->
             Inntekt(
-                type = inntekt.inntektsrapportering.name,
-                beløp = inntekt.beløp,
+                type = inntekt.innhold.inntektsrapportering.name,
+                beløp = inntekt.innhold.beløp,
             )
         }
     }
