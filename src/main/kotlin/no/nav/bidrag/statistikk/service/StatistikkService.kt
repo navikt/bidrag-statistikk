@@ -97,13 +97,13 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         return sluttberegning.innholdTilObjekt<SluttberegningForskudd>().aldersgruppe.name
     }
 
-    fun List<GrunnlagDto>.finnAntallBarnIEgenHusstandForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Double? {
-        val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
+    fun List<GrunnlagDto>.finnAntallBarnIEgenHusstandForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Double {
+        val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return 0.0
         val antallBarnIEgenHusstandPeriode = finnOgKonverterGrunnlagSomErReferertAv<DelberegningBarnIHusstand>(
             Grunnlagstype.DELBEREGNING_BARN_I_HUSSTAND,
             sluttberegning,
         ).firstOrNull()
-        return antallBarnIEgenHusstandPeriode?.innhold?.antallBarn
+        return antallBarnIEgenHusstandPeriode?.innhold?.antallBarn ?: 0.0
     }
 
     fun List<GrunnlagDto>.finnSivilstandForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): String? {
