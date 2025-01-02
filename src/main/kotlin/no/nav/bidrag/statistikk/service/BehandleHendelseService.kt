@@ -26,6 +26,9 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
     }
 
     private fun vedtakstypeTilStatikk(vedtakstype: Vedtakstype): Boolean {
-        return vedtakstype == Vedtakstype.ENDRING || vedtakstype == Vedtakstype.FASTSETTELSE
+        return vedtakstype == Vedtakstype.ALDERSJUSTERING || vedtakstype == Vedtakstype.ALDERSOPPHØR || vedtakstype == Vedtakstype.ENDRING ||
+            vedtakstype == Vedtakstype.ENDRING_MOTTAKER || vedtakstype == Vedtakstype.FASTSETTELSE || vedtakstype == Vedtakstype.INDEKSREGULERING ||
+            vedtakstype == Vedtakstype.KLAGE || vedtakstype == Vedtakstype.OPPHØR || vedtakstype == Vedtakstype.REVURDERING
+
     }
 }
