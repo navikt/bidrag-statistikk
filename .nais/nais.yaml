@@ -19,16 +19,11 @@ spec:
           - "NAVident"
           - "azp_name"
   accessPolicy:
-    inbound:
-      rules:
-      {{#each azureAccessInbound}}
-          - application: {{this.application}}
-            namespace: {{this.namespace}}
-            cluster: {{this.cluster}}
-      {{/each}}
     outbound:
-      external:
-        - host: {{ azure.bidrag_organisasjon_url }}
+      rules:
+      {{#each outbound-access-apps}}
+          - application: {{this}}
+      {{/each}}
   image: {{ image }}
   kafka:
     pool: {{ kafka.pool }}
@@ -62,22 +57,8 @@ spec:
   {{#each ingresses as |url|}}
      - {{url}}
   {{/each}}
-  gcp:
-    sqlInstances:
-      - name: {{ dbname }}
-        type: POSTGRES_15
-        databases:
-          - name: {{ dbname }}
-            envVarPrefix: DB
-        tier: {{ spec.gcp.sqlInstances.tier }}
-        pointInTimeRecovery: {{ spec.gcp.sqlInstances.pointInTimeRecovery }}
-        diskAutoresize: {{ spec.gcp.sqlInstances.diskAutoresize }}
   env:
-    - name: TOPIC_VEDTAK
-      value: {{ kafka-topic-vedtak }}
-    - name: BIDRAG_ORGANISASJON_URL
-      value: https://{{ azure.bidrag_organisasjon_url }}/bidrag-organisasjon
-    - name: BIDRAG_ORGANISASJON_SCOPE
-      value: {{ azure.bidrag_organisasjon_scope }}
-    - name: SPRING_PROFILES_ACTIVE
-      value: {{ spring-profiles }}
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}
