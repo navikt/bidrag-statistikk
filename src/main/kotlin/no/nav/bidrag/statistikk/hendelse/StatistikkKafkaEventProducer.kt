@@ -26,7 +26,7 @@ class StatistikkKafkaEventProducer(
                 record,
             ).get()
         } catch (e: Exception) {
-            LOGGER.error(e) { "Det skjedde en feil ved sending av kafka melding, $record" }
+            LOGGER.error(e) { "Det skjedde en feil ved sending av kafkamelding, $record" }
             throw IllegalStateException(e.message, e)
         }
     }

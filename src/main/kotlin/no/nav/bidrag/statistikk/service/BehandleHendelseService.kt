@@ -29,6 +29,5 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
         return vedtakstype == Vedtakstype.ALDERSJUSTERING || vedtakstype == Vedtakstype.ALDERSOPPHØR || vedtakstype == Vedtakstype.ENDRING ||
             vedtakstype == Vedtakstype.ENDRING_MOTTAKER || vedtakstype == Vedtakstype.FASTSETTELSE || vedtakstype == Vedtakstype.INDEKSREGULERING ||
             vedtakstype == Vedtakstype.KLAGE || vedtakstype == Vedtakstype.OPPHØR || vedtakstype == Vedtakstype.REVURDERING
-
     }
 }

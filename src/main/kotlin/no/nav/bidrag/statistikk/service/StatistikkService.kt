@@ -11,6 +11,7 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.Grunnlagsreferanse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.InntektsrapporteringPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
+import no.nav.bidrag.transport.behandling.felles.grunnlag.Søknadsbarn
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnOgKonverterGrunnlagSomErReferertAv
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnSluttberegningIReferanser
 import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjekt
@@ -39,6 +40,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                 vedtaksid = vedtakHendelse.id.toLong(),
                 vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
                 type = vedtakHendelse.type.name,
+                saksnr = stønadsendring.sak.verdi,
                 kravhaver = stønadsendring.kravhaver.verdi,
                 mottaker = stønadsendring.mottaker.verdi,
                 forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
