@@ -41,6 +41,7 @@ class HendelserServiceTest {
                 vedtaksid = 1,
                 vedtakstidspunkt = LocalDateTime.now(),
                 type = Vedtakstype.ENDRING.name,
+                saksnr = "123",
                 kravhaver = "12345",
                 mottaker = "54321",
                 forskuddPeriodeListe = listOf(
