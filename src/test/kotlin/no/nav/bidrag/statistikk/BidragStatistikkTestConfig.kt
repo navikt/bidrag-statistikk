@@ -8,11 +8,9 @@ import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.statistikk.BidragStatistikkLocal.Companion.LOCAL_PROFILE
 import no.nav.bidrag.statistikk.BidragStatistikkTest.Companion.TEST_PROFILE
 import no.nav.bidrag.statistikk.hendelse.PojoVedtakHendelseListener
-import no.nav.bidrag.statistikk.hendelse.StatistikkKafkaEventProducer
 import no.nav.bidrag.statistikk.hendelse.VedtakHendelseListener
 import no.nav.bidrag.statistikk.service.BehandleHendelseService
 import no.nav.bidrag.statistikk.service.JsonMapperService
-import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.slf4j.LoggerFactory
@@ -62,15 +60,5 @@ class BidragStatistikkTestConfig {
     }
 
     @Bean
-    fun statistikkKafkaEventProducer() = TestStatistikkKafkaEventProducer()
-
-    @Bean
-    fun vedtakHendelseListener(jsonMapperService: JsonMapperService, behandeHendelseService: BehandleHendelseService): VedtakHendelseListener =
-        PojoVedtakHendelseListener(jsonMapperService, behandeHendelseService)
-}
-
-class TestStatistikkKafkaEventProducer : StatistikkKafkaEventProducer {
-    override fun publishForskudd(forskuddHendelse: ForskuddHendelse) {
-        SECURE_LOGGER.info("Test Kafka: $forskuddHendelse")
-    }
+    fun vedtakHendelseListener(jsonMapperService: JsonMapperService, behandeHendelseService: BehandleHendelseService): VedtakHendelseListener = PojoVedtakHendelseListener(jsonMapperService, behandeHendelseService)
 }

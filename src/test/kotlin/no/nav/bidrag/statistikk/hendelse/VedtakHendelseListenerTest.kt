@@ -2,11 +2,14 @@ package no.nav.bidrag.statistikk.hendelse
 
 import no.nav.bidrag.statistikk.BidragStatistikkTest
 import no.nav.bidrag.statistikk.BidragStatistikkTest.Companion.TEST_PROFILE
+import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDto
+import no.nav.bidrag.statistikk.TestUtil.Companion.stubHenteVedtak
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.test.context.ActiveProfiles
 
@@ -15,12 +18,14 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles(TEST_PROFILE)
 @EnableMockOAuth2Server
 @EnableAspectJAutoProxy
+@AutoConfigureWireMock(port = 0)
 class VedtakHendelseListenerTest {
     @Autowired
     private lateinit var vedtakHendelseListener: VedtakHendelseListener
 
     @Test
     fun `skal lese vedtakshendelse uten feil`() {
+        stubHenteVedtak(byggVedtakDto())
         vedtakHendelseListener.lesHendelse(
             """
             {
