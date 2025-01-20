@@ -6,8 +6,9 @@
 # Mocks OIDC.
 #
 ####################################################################
-BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.https-port}/vedtak
+BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.port}/vedtak
 NAIS_APP_NAME: bidrag-statistikk
+TOPIC_STATISTIKK: bidrag-statistikk
 spring:
   config.activate.on-profile: test, local
   security:
