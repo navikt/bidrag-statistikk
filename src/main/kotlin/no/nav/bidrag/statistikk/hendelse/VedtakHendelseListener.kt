@@ -21,9 +21,9 @@ open class PojoVedtakHendelseListener(
             val vedtakHendelse = jsonMapperService.mapHendelse(hendelse)
             behandeHendelseService.behandleHendelse(vedtakHendelse)
         } catch (e: Exception) {
-            LOGGER.error(e) { "Mapping av hendelse feilet for kafkamelding, se sikker logg for mer info" }
+            LOGGER.error(e) { "Behandling av vedtakshendelse feilet, se sikker logg for mer info" }
             SECURE_LOGGER.error(
-                "Mapping av hendelse feilet for kafkamelding: $hendelse",
+                "Behandling av vedtakshendelse feilet for vedtak i kafkamelding: $hendelse",
             )
             throw e
         }
