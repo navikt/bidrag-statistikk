@@ -23,7 +23,7 @@ open class PojoVedtakHendelseListener(
         } catch (e: Exception) {
             LOGGER.error(e) { "Behandling av vedtakshendelse feilet, se sikker logg for mer info" }
             SECURE_LOGGER.error(
-                "Behandling av vedtakshendelse feilet for vedtak i kafkamelding: $hendelse",
+                "Behandling av vedtakshendelse feilet for: $hendelse",
             )
             throw e
         }

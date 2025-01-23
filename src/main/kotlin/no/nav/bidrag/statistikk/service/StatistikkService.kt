@@ -32,7 +32,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
         val vedtak = hentVedtak(vedtakHendelse.id.toLong())
 
-        SECURE_LOGGER.info("Vedtak hentet for vedtakshendelse med id ${vedtakHendelse.id} vedtak: $vedtak")
+        SECURE_LOGGER.info("Vedtak hentet for vedtakshendelse: ${vedtakHendelse.id} vedtak: $vedtak")
 
         vedtak?.stønadsendringListe?.forEach { stønadsendring ->
             val forskuddHendelse = ForskuddHendelse(
@@ -57,11 +57,11 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                         },
                         beløp = periode.beløp,
                         resultat = periode.resultatkode,
-                        barnetsAldersgruppe = grunnlagsdata.barnetsAldersgruppe!!,
-                        antallBarnIEgenHusstand = grunnlagsdata.antallBarnIEgenHusstand!!,
-                        sivilstand = grunnlagsdata.sivilstand!!,
-                        barnBorMedBM = grunnlagsdata.barnBorMedBM!!,
-                        inntektListe = grunnlagsdata.inntektListe!!,
+                        barnetsAldersgruppe = grunnlagsdata?.barnetsAldersgruppe,
+                        antallBarnIEgenHusstand = grunnlagsdata?.antallBarnIEgenHusstand,
+                        sivilstand = grunnlagsdata?.sivilstand,
+                        barnBorMedBM = grunnlagsdata?.barnBorMedBM,
+                        inntektListe = grunnlagsdata?.inntektListe ?: emptyList(),
                     )
                 },
             )
@@ -71,7 +71,12 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     fun hentVedtak(vedtaksid: Long): VedtakDto? = bidragVedtakConsumer.hentVedtak(vedtaksid)
 
-    private fun finnGrunnlagsdata(grunnlagListe: List<GrunnlagDto>, grunnlagsreferanseListe: List<Grunnlagsreferanse>): GrunnlagsdataForskudd {
+    private fun finnGrunnlagsdata(grunnlagListe: List<GrunnlagDto>, grunnlagsreferanseListe: List<Grunnlagsreferanse>): GrunnlagsdataForskudd? {
+        // Sjekker først om perioden har grunnlag, hvis ikke returneres null
+        if (grunnlagsreferanseListe.isEmpty()) {
+            return null
+        }
+
         // Finn grunnlagsdata
         val respons = GrunnlagsdataForskudd(
             barnetsAldersgruppe = grunnlagListe.finnBarnetsAldersgruppeForPeriode(grunnlagsreferanseListe),

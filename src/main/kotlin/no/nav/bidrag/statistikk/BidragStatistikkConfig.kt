@@ -72,7 +72,7 @@ class KafkaConfig {
             try {
                 message.payload
             } catch (re: RuntimeException) {
-                "Det er ikke mulig å lese innholdet i meldingen"
+                "Det er ikke mulig å lese innholdet i Kafkameldingen"
             }
 
         LOGGER.error(
@@ -82,7 +82,7 @@ class KafkaConfig {
             message.headers,
         )
         SECURE_LOGGER.error(
-            "Feil ved behandling av hendelse, feil ved les av hendelse: {} exception: {} - {} - headers: {}",
+            "Feil ved behandling av hendelse: {} exception: {} - {} - headers: {}",
             messagePayload,
             e.javaClass.simpleName,
             e.message,
