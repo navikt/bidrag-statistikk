@@ -33,7 +33,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
         val vedtak = hentVedtak(vedtakHendelse.id.toLong())
 
-        SECURE_LOGGER.info("Vedtak hentet for vedtakshendelse: ${vedtakHendelse.id} vedtak: $vedtak")
+        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id})")
+        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtak)
 
         vedtak?.stønadsendringListe?.filter { it.type == Stønadstype.FORSKUDD }?.forEach { stønadsendring ->
             val forskuddHendelse = ForskuddHendelse(

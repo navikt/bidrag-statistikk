@@ -1,5 +1,6 @@
 package no.nav.bidrag.statistikk.service
 
+import no.nav.bidrag.statistikk.LOGGER
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.hendelse.StatistikkKafkaEventProducer
 import no.nav.bidrag.statistikk.util.StatistikkUtil.Companion.tilJson
@@ -11,6 +12,7 @@ class HendelserService(private val statistikkKafkaEventProducer: StatistikkKafka
 
     fun opprettHendelse(forskuddHendelse: ForskuddHendelse) {
         statistikkKafkaEventProducer.publishForskudd(forskuddHendelse)
-        SECURE_LOGGER.info("Ny melding lagt på topic statistikk: ${tilJson(forskuddHendelse)}")
+        LOGGER.info("Ny melding lagt på topic statistikk med vedtaksid: ${forskuddHendelse.vedtaksid}")
+        SECURE_LOGGER.debug("Ny melding lagt på topic statistikk: ${tilJson(forskuddHendelse)}")
     }
 }

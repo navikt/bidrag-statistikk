@@ -19,7 +19,8 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
     BehandleHendelseService {
     override fun behandleHendelse(vedtakHendelse: VedtakHendelse) {
         if (vedtakSkalBehandles(vedtakHendelse)) {
-            SECURE_LOGGER.info("Behandler vedtakHendelse: $vedtakHendelse")
+            LOGGER.info("Behandler vedtakHendelse med vedtaksid: ${vedtakHendelse.id}")
+            SECURE_LOGGER.debug("Behandler vedtakHendelse: {}", vedtakHendelse)
             statistikkService.behandleVedtakshendelse(vedtakHendelse)
         }
     }
