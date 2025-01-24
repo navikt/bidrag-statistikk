@@ -26,7 +26,6 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.SendResult
 import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.CompletableFuture
-import kotlin.test.assertNull
 
 @SpringBootTest(classes = [BidragStatistikkTest::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("VedtakHendelseListener (test av forretningslogikk)")

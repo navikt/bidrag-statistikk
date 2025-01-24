@@ -395,6 +395,5 @@ class TestUtil {
             engangsbeløpListe = emptyList(),
             behandlingsreferanseListe = emptyList(),
         )
-
     }
 }
