@@ -11,11 +11,11 @@
   </parent>
 
   <groupId>no.nav.bidrag</groupId>
-  <artifactId>bidrag-vedtak</artifactId>
+  <artifactId>bidrag-statistikk</artifactId>
   <version>0.0.19-SNAPSHOT</version>
 
-  <name>bidrag-vedtak</name>
-  <description>Behandling av vedtak i Bidrag</description>
+  <name>bidrag-statistikk</name>
+  <description>Behandling av statistikk i Bidrag</description>
 
   <properties>
 
@@ -25,7 +25,7 @@
     <token-support.version>3.2.0</token-support.version>
 
     <!-- dependencies -->
-    <bidrag-felles.version>2024.12.16.144038</bidrag-felles.version>
+    <bidrag-felles.version>2025.01.23.094828</bidrag-felles.version>
     <bidrag-tilgangskontroll.version>1.9.22</bidrag-tilgangskontroll.version>
     <mockito-kotlin.version>5.3.1</mockito-kotlin.version>
     <nimbus-jose-jwt.version>9.48</nimbus-jose-jwt.version>
@@ -110,11 +110,11 @@
     </dependency>
 
     <!-- nav -->
-<!--    <dependency>
-      <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-transport-felles</artifactId>
-      <version>${bidrag-felles.version}</version>
-    </dependency>-->
+    <!--    <dependency>
+          <groupId>no.nav.bidrag</groupId>
+          <artifactId>bidrag-transport-felles</artifactId>
+          <version>${bidrag-felles.version}</version>
+        </dependency>-->
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
@@ -146,22 +146,6 @@
       <version>${token-support.version}</version>
     </dependency>
 
-    <!-- Database -->
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
-      <scope>compile</scope>
-    </dependency>
     <!-- swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>

@@ -1,1 +1,0 @@
-alter table engangsbeløp add column if not exists betalt_beløp decimal;

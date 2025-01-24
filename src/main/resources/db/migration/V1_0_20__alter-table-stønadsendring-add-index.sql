@@ -1,1 +1,0 @@
-CREATE INDEX idx_stønadsendring_skyldner_kravhaver ON stønadsendring(skyldner, kravhaver, sak, type);

@@ -6,15 +6,11 @@
 # Mocks OIDC.
 #
 ####################################################################
-BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.https-port}/organisasjon
-NAIS_APP_NAME: bidrag-vedtak
+BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.port}/vedtak
+NAIS_APP_NAME: bidrag-statistikk
+TOPIC_STATISTIKK: bidrag-statistikk
 spring:
   config.activate.on-profile: test, local
-  flyway.enabled: false
-  datasource.type: com.zaxxer.hikari.HikariDataSource
-  datasource.url: jdbc:h2:mem:default
-  h2.console.enabled: true
-  jpa.hibernate.hbmddl-auto: create-drop
   security:
     oauth2:
       resourceserver:
@@ -28,8 +24,8 @@ spring:
 no.nav.security.jwt:
   client:
     registration:
-      bidrag-organisasjon:
-        resource-url: ${BIDRAG_ORGANISASJON_URL}
+      bidrag-vedtak:
+        resource-url: ${BIDRAG_VEDTAK_URL}
         token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azure/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: api://org/.default

@@ -1,45 +1,16 @@
-name: bidrag-vedtak-q2
+name: bidrag-statistikk-q2
 ingresses:
-  - https://bidrag-vedtak-q2.intern.dev.nav.no
-dbname: bidrag-vedtak-q2
+  - https://bidrag-statistikk-q2.intern.dev.nav.no
 kafka:
   pool: nav-dev
-kafka-topic-vedtak: bidrag.vedtak-q2
-spring-profiles: live,nais,database-new
-azureAccessInbound:
-  - application: bidrag-revurder-forskudd-data-q2
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-cucumber-cloud
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bisys
-    namespace: bidrag
-    cluster: dev-fss
-  - application: bidrag-dokument-bestilling-q2
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-dokument-bestilling
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-dokument-forsendelse
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-dokument-forsendelse
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-simuler-beregning-q2
-    namespace: bidrag
-    cluster: dev-gcp
-  - application: bidrag-ui
-    namespace: bidrag
-    cluster: dev-fss
-  - application: bidrag-behandling-q2
-    namespace: bidrag
-    cluster: dev-gcp
-azure:
-  bidrag_organisasjon_url: bidrag-organisasjon.dev-fss-pub.nais.io
-  bidrag_organisasjon_scope: dev-fss.bidrag.bidrag-organisasjon
+env:
+  SPRING_PROFILES_ACTIVE: live,nais
+  BIDRAG_VEDTAK_URL: http://bidrag-vedtak-q2
+  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-q2
+  TOPIC_STATISTIKK: bidrag.statistikk-q2
+  TOPIC_VEDTAK: bidrag.vedtak-q2
+outbound-access-apps:
+  - bidrag-vedtak-q2
 spec:
   replicas:
     min: 1
@@ -51,8 +22,3 @@ spec:
     requests:
       cpu: 100m
       memory: 128Mi
-  gcp:
-    sqlInstances:
-      tier: db-f1-micro
-      diskAutoresize: false
-      pointInTimeRecovery: false
