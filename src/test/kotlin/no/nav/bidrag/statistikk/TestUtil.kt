@@ -269,6 +269,74 @@ class TestUtil {
                     grunnlagReferanseListe = emptyList(),
                     periodeListe = listOf(
                         VedtakPeriodeDto(
+                            periode = ÅrMånedsperiode(YearMonth.of(2024, 7), YearMonth.of(2024, 8)),
+                            beløp = BigDecimal.valueOf(2),
+                            valutakode = "NOK",
+                            resultatkode = "A",
+                            delytelseId = "delytelseId1",
+                            grunnlagReferanseListe = listOf(
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                            ),
+                        ),
+                    ),
+                ),
+                StønadsendringDto(
+                    type = Stønadstype.FORSKUDD,
+                    sak = Saksnummer("B"),
+                    skyldner = Personident("C"),
+                    kravhaver = Personident("D"),
+                    mottaker = Personident("E"),
+                    førsteIndeksreguleringsår = 2024,
+                    innkreving = Innkrevingstype.MED_INNKREVING,
+                    Beslutningstype.ENDRING,
+                    omgjørVedtakId = null,
+                    eksternReferanse = null,
+                    grunnlagReferanseListe = emptyList(),
+                    periodeListe = listOf(
+                        VedtakPeriodeDto(
+                            periode = ÅrMånedsperiode(YearMonth.of(2024, 8), null),
+                            beløp = BigDecimal.valueOf(2),
+                            valutakode = "NOK",
+                            resultatkode = "A",
+                            delytelseId = "delytelseId1",
+                            grunnlagReferanseListe = listOf(
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            engangsbeløpListe = emptyList(),
+            behandlingsreferanseListe = emptyList(),
+        )
+
+        fun byggVedtakDtoUtenGrunnlag(): VedtakDto = VedtakDto(
+            kilde = Vedtakskilde.MANUELT,
+            type = Vedtakstype.ENDRING,
+            opprettetAv = "ABCDEFG",
+            opprettetAvNavn = "",
+            kildeapplikasjon = "",
+            vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            enhetsnummer = Enhetsnummer("ABCD"),
+            innkrevingUtsattTilDato = LocalDate.now(),
+            fastsattILand = "NO",
+            opprettetTidspunkt = LocalDateTime.parse("2021-07-06T09:31:25.007971200"),
+            grunnlagListe = emptyList(),
+            stønadsendringListe = listOf(
+                StønadsendringDto(
+                    type = Stønadstype.FORSKUDD,
+                    sak = Saksnummer("B"),
+                    skyldner = Personident("C"),
+                    kravhaver = Personident("D"),
+                    mottaker = Personident("E"),
+                    førsteIndeksreguleringsår = 2024,
+                    innkreving = Innkrevingstype.MED_INNKREVING,
+                    Beslutningstype.ENDRING,
+                    omgjørVedtakId = null,
+                    eksternReferanse = null,
+                    grunnlagReferanseListe = emptyList(),
+                    periodeListe = listOf(
+                        VedtakPeriodeDto(
                             periode = ÅrMånedsperiode(YearMonth.of(2024, 7), null),
                             beløp = BigDecimal.valueOf(2),
                             valutakode = "NOK",
@@ -284,5 +352,49 @@ class TestUtil {
             engangsbeløpListe = emptyList(),
             behandlingsreferanseListe = emptyList(),
         )
+
+        fun byggVedtakDtoUtenForskudd(): VedtakDto = VedtakDto(
+            kilde = Vedtakskilde.MANUELT,
+            type = Vedtakstype.ENDRING,
+            opprettetAv = "ABCDEFG",
+            opprettetAvNavn = "",
+            kildeapplikasjon = "",
+            vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            enhetsnummer = Enhetsnummer("ABCD"),
+            innkrevingUtsattTilDato = LocalDate.now(),
+            fastsattILand = "NO",
+            opprettetTidspunkt = LocalDateTime.parse("2021-07-06T09:31:25.007971200"),
+            grunnlagListe = emptyList(),
+            stønadsendringListe = listOf(
+                StønadsendringDto(
+                    type = Stønadstype.BIDRAG,
+                    sak = Saksnummer("B"),
+                    skyldner = Personident("C"),
+                    kravhaver = Personident("D"),
+                    mottaker = Personident("E"),
+                    førsteIndeksreguleringsår = 2024,
+                    innkreving = Innkrevingstype.MED_INNKREVING,
+                    Beslutningstype.ENDRING,
+                    omgjørVedtakId = null,
+                    eksternReferanse = null,
+                    grunnlagReferanseListe = emptyList(),
+                    periodeListe = listOf(
+                        VedtakPeriodeDto(
+                            periode = ÅrMånedsperiode(YearMonth.of(2024, 7), null),
+                            beløp = BigDecimal.valueOf(2),
+                            valutakode = "NOK",
+                            resultatkode = "A",
+                            delytelseId = "delytelseId1",
+                            grunnlagReferanseListe = listOf(
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            engangsbeløpListe = emptyList(),
+            behandlingsreferanseListe = emptyList(),
+        )
+
     }
 }

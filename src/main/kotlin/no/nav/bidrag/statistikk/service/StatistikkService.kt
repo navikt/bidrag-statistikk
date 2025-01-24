@@ -2,6 +2,7 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
 import no.nav.bidrag.transport.behandling.felles.grunnlag.BostatusPeriode
@@ -34,7 +35,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
         SECURE_LOGGER.info("Vedtak hentet for vedtakshendelse: ${vedtakHendelse.id} vedtak: $vedtak")
 
-        vedtak?.stønadsendringListe?.forEach { stønadsendring ->
+        vedtak?.stønadsendringListe?.filter { it.type == Stønadstype.FORSKUDD }?.forEach { stønadsendring ->
             val forskuddHendelse = ForskuddHendelse(
                 vedtaksid = vedtakHendelse.id.toLong(),
                 vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
@@ -73,7 +74,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     private fun finnGrunnlagsdata(grunnlagListe: List<GrunnlagDto>, grunnlagsreferanseListe: List<Grunnlagsreferanse>): GrunnlagsdataForskudd? {
         // Sjekker først om perioden har grunnlag, hvis ikke returneres null
-        if (grunnlagsreferanseListe.isEmpty()) {
+        if (grunnlagListe.isEmpty()) {
             return null
         }
 

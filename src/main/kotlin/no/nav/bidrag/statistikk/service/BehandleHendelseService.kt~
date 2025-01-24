@@ -17,17 +17,7 @@ interface BehandleHendelseService {
 class DefaultBehandleHendelseService(private val statistikkService: StatistikkService) :
     BehandleHendelseService {
     override fun behandleHendelse(vedtakHendelse: VedtakHendelse) {
-
-        if (kildeapplikasjonTilStatistikk(vedtakHendelse.kildeapplikasjon)) {
-            // Filterer bort vedtak fattet i bisys
-            SECURE_LOGGER.info("Behandler vedtakHendelse: $vedtakHendelse")
-            statistikkService.behandleVedtakshendelse(vedtakHendelse)
-        } else {
-            SECURE_LOGGER.info("VedtakHendelse: $vedtakHendelse med kildeapplikasjon ${vedtakHendelse.kildeapplikasjon} blir ikke behandlet")
-        }
-    }
-
-    private fun kildeapplikasjonTilStatistikk(kildeapplikasjon: String): Boolean {
-        return kildeapplikasjon == "bidrag-behandling-q2" || kildeapplikasjon == "bidrag-behandling"
+        SECURE_LOGGER.info("Behandler vedtakHendelse: $vedtakHendelse")
+        statistikkService.behandleVedtakshendelse(vedtakHendelse)
     }
 }
