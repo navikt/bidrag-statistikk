@@ -2,6 +2,7 @@ package no.nav.bidrag.statistikk.service
 
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
+import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.consumer.BidragVedtakConsumer
@@ -31,44 +32,66 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
+        val bidragBehandling = "bidrag-behandling"
+
         val vedtak = hentVedtak(vedtakHendelse.id.toLong())
 
-        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id})")
+        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtak)
 
-        vedtak?.stønadsendringListe?.filter { it.type == Stønadstype.FORSKUDD }?.forEach { stønadsendring ->
-            val forskuddHendelse = ForskuddHendelse(
-                vedtaksid = vedtakHendelse.id.toLong(),
-                vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
-                type = vedtakHendelse.type.name,
-                saksnr = stønadsendring.sak.verdi,
-                kravhaver = stønadsendring.kravhaver.verdi,
-                mottaker = stønadsendring.mottaker.verdi,
-                forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
-                    val grunnlagsdata = finnGrunnlagsdata(vedtak.grunnlagListe.toList(), periode.grunnlagReferanseListe)
-                    ForskuddPeriode(
-                        periodeFra = LocalDate.of(periode.periode.fom.year, periode.periode.fom.month, 1),
-                        periodeTil = if (periode.periode.til == null) {
-                            null
-                        } else {
-                            LocalDate.of(
-                                periode.periode.til!!.year,
-                                periode.periode.til!!.month,
-                                1,
+        vedtak?.stønadsendringListe?.filter { it.type == Stønadstype.FORSKUDD && it.beslutning == Beslutningstype.ENDRING }
+            ?.forEach { stønadsendring ->
+                val forskuddHendelse = ForskuddHendelse(
+                    vedtaksid = vedtakHendelse.id.toLong(),
+                    vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
+                    type = vedtakHendelse.type.name,
+                    saksnr = stønadsendring.sak.verdi,
+                    kravhaver = stønadsendring.kravhaver.verdi,
+                    mottaker = stønadsendring.mottaker.verdi,
+                    historiskVedtak = vedtak.kildeapplikasjon != bidragBehandling,
+                    forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
+                        val grunnlagsdata = finnGrunnlagsdata(vedtak.grunnlagListe, periode.grunnlagReferanseListe)
+
+                        if ((
+                                grunnlagsdata?.barnetsAldersgruppe == null ||
+                                    grunnlagsdata.antallBarnIEgenHusstand == null ||
+                                    grunnlagsdata.sivilstand == null ||
+                                    grunnlagsdata.barnBorMedBM == null ||
+                                    grunnlagsdata.inntektListe?.isEmpty() == true
+                                ) &&
+                            vedtak.kildeapplikasjon == bidragBehandling
+                        ) {
+                            SECURE_LOGGER.info(
+                                "Fullstendig grunnlag ikke funnet for vedtaksid: {}, vedtakstype: {}, resultatkode: {}, beløp: {}",
+                                vedtakHendelse.id,
+                                vedtak.type,
+                                periode.resultatkode,
+                                periode.beløp,
                             )
-                        },
-                        beløp = periode.beløp,
-                        resultat = periode.resultatkode,
-                        barnetsAldersgruppe = grunnlagsdata?.barnetsAldersgruppe,
-                        antallBarnIEgenHusstand = grunnlagsdata?.antallBarnIEgenHusstand,
-                        sivilstand = grunnlagsdata?.sivilstand,
-                        barnBorMedBM = grunnlagsdata?.barnBorMedBM,
-                        inntektListe = grunnlagsdata?.inntektListe ?: emptyList(),
-                    )
-                },
-            )
-            hendelserService.opprettHendelse(forskuddHendelse)
-        }
+                        }
+                        ForskuddPeriode(
+                            periodeFra = LocalDate.of(periode.periode.fom.year, periode.periode.fom.month, 1),
+                            periodeTil = if (periode.periode.til == null) {
+                                null
+                            } else {
+                                LocalDate.of(
+                                    periode.periode.til!!.year,
+                                    periode.periode.til!!.month,
+                                    1,
+                                )
+                            },
+                            beløp = periode.beløp,
+                            resultat = periode.resultatkode,
+                            barnetsAldersgruppe = grunnlagsdata?.barnetsAldersgruppe,
+                            antallBarnIEgenHusstand = grunnlagsdata?.antallBarnIEgenHusstand,
+                            sivilstand = grunnlagsdata?.sivilstand,
+                            barnBorMedBM = grunnlagsdata?.barnBorMedBM,
+                            inntektListe = grunnlagsdata?.inntektListe ?: emptyList(),
+                        )
+                    },
+                )
+                hendelserService.opprettHendelse(forskuddHendelse)
+            }
     }
 
     fun hentVedtak(vedtaksid: Long): VedtakDto? = bidragVedtakConsumer.hentVedtak(vedtaksid)
@@ -87,14 +110,14 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             barnBorMedBM = grunnlagListe.finnOmBarnBorMedBMIPeriode(grunnlagsreferanseListe),
             inntektListe = grunnlagListe.finnInntekter(grunnlagsreferanseListe),
         )
-        if (respons.barnetsAldersgruppe == null ||
-            respons.antallBarnIEgenHusstand == null ||
-            respons.sivilstand == null ||
-            respons.barnBorMedBM == null ||
-            respons.inntektListe == null
-        ) {
-            throw Exception("Klarte ikke å hente grunnlagsdata for forskuddsvedtak, $respons")
-        }
+        /*        if (respons.barnetsAldersgruppe == null ||
+                    respons.antallBarnIEgenHusstand == null ||
+                    respons.sivilstand == null ||
+                    respons.barnBorMedBM == null ||
+                    respons.inntektListe == null
+                ) {
+                    throw Exception("Klarte ikke å hente grunnlagsdata for forskuddsvedtak, $respons")
+                }*/
 
         return respons
     }

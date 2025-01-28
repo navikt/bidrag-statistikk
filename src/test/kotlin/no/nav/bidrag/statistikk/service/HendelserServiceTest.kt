@@ -44,6 +44,7 @@ class HendelserServiceTest {
                 saksnr = "123",
                 kravhaver = "12345",
                 mottaker = "54321",
+                historiskVedtak = false,
                 forskuddPeriodeListe = listOf(
                     ForskuddPeriode(
                         periodeFra = LocalDate.of(2021, 1, 1),
