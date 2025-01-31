@@ -47,7 +47,7 @@ spring:
       max-poll-records: 10
       enable-auto-commit: false
     listener:
-      ackMode: RECORD
+      ackMode: record
 
   config.activate.on-profile: "live"
 no.nav.security.jwt:
