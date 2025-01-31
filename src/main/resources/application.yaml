@@ -46,6 +46,8 @@ spring:
       auto-offset-reset: earliest
       max-poll-records: 10
       enable-auto-commit: false
+    listener:
+      ackMode: record
 
   config.activate.on-profile: "live"
 no.nav.security.jwt:
