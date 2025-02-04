@@ -13,6 +13,6 @@ class HendelserService(private val statistikkKafkaEventProducer: StatistikkKafka
     fun opprettHendelse(forskuddHendelse: ForskuddHendelse) {
         val offset = statistikkKafkaEventProducer.publishForskudd(forskuddHendelse)
         LOGGER.info("Ny melding lagt på topic bidrag.statistikk med offset: $offset og vedtaksid: ${forskuddHendelse.vedtaksid}")
-        SECURE_LOGGER.info("Ny melding lagt på topic bidrag.statistikk. Offset: $offset og hendelse : ${tilJson(forskuddHendelse)}")
+        SECURE_LOGGER.info("Ny melding lagt på topic bidrag.statistikk med offset: $offset og hendelse : ${tilJson(forskuddHendelse)}")
     }
 }
