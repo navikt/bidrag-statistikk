@@ -110,14 +110,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             barnBorMedBM = grunnlagListe.finnOmBarnBorMedBMIPeriode(grunnlagsreferanseListe),
             inntektListe = grunnlagListe.finnInntekter(grunnlagsreferanseListe),
         )
-        /*        if (respons.barnetsAldersgruppe == null ||
-                    respons.antallBarnIEgenHusstand == null ||
-                    respons.sivilstand == null ||
-                    respons.barnBorMedBM == null ||
-                    respons.inntektListe == null
-                ) {
-                    throw Exception("Klarte ikke å hente grunnlagsdata for forskuddsvedtak, $respons")
-                }*/
 
         return respons
     }
