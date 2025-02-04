@@ -11,7 +11,6 @@ import no.nav.bidrag.statistikk.TestUtil.Companion.stubHenteVedtak
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
@@ -51,7 +50,6 @@ class VedtakHendelseListenerTest {
     }
 
     @Test
-    @Disabled
     fun `skal lese vedtakshendelse uten feil`() {
         stubHenteVedtak(byggVedtakDto())
         vedtakHendelseListener.lesHendelse(
@@ -98,7 +96,6 @@ class VedtakHendelseListenerTest {
     }
 
     @Test
-    @Disabled
     fun `skal lese vedtakshendelse uten grunnlag uten feil`() {
         stubHenteVedtak(byggVedtakDtoUtenGrunnlag())
         vedtakHendelseListener.lesHendelse(
