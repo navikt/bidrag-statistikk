@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 class HendelserService(private val statistikkKafkaEventProducer: StatistikkKafkaEventProducer) {
 
     fun opprettHendelse(forskuddHendelse: ForskuddHendelse) {
-        statistikkKafkaEventProducer.publishForskudd(forskuddHendelse)
-        LOGGER.info("Ny melding lagt på topic bidrag.statistikk med vedtaksid: ${forskuddHendelse.vedtaksid}")
-        SECURE_LOGGER.info("Ny melding lagt på topic bidrag.statistikk: ${tilJson(forskuddHendelse)}")
+        val offset = statistikkKafkaEventProducer.publishForskudd(forskuddHendelse)
+        LOGGER.info("Ny melding lagt på topic bidrag.statistikk med offset: $offset og vedtaksid: ${forskuddHendelse.vedtaksid}")
+        SECURE_LOGGER.info("Ny melding lagt på topic bidrag.statistikk med offset: $offset og hendelse : ${tilJson(forskuddHendelse)}")
     }
 }
