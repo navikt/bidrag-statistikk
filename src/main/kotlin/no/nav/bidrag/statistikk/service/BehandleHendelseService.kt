@@ -1,7 +1,5 @@
 package no.nav.bidrag.statistikk.service
 
-import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
-import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.transport.behandling.vedtak.VedtakHendelse
 import org.slf4j.LoggerFactory
@@ -27,6 +25,7 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
     }
 
     private fun vedtakSkalBehandles(vedtakHendelse: VedtakHendelse): Boolean {
-        return vedtakHendelse.stønadsendringListe?.any { it.type == Stønadstype.FORSKUDD && it.beslutning == Beslutningstype.ENDRING } ?: false
+        return false
+//        return vedtakHendelse.stønadsendringListe?.any { it.type == Stønadstype.FORSKUDD && it.beslutning == Beslutningstype.ENDRING } ?: false
     }
 }
