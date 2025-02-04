@@ -29,10 +29,9 @@ class StatistikkKafkaEventProducer(
         )
 
         try {
-            val offset = kafkaTemplate.send(
+            return kafkaTemplate.send(
                 record,
             ).get().recordMetadata.offset()
-            return offset
         } catch (e: Exception) {
             LOGGER.error(e) { "Det skjedde en feil ved sending av kafkamelding, $record" }
             throw IllegalStateException(e.message, e)
