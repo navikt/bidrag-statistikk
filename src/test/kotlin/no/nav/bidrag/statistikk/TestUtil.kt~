@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
+import kotlinx.coroutines.flow.DEFAULT_CONCURRENCY
 import no.nav.bidrag.domene.enums.beregning.Resultatkode
 import no.nav.bidrag.domene.enums.beregning.Samværsklasse
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
@@ -27,8 +28,10 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.BostatusPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBarnIHusstand
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBidragsevne
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBidragspliktigesAndel
+import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningBoforhold
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningNettoBarnetillegg
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningSamværsfradrag
+import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningSamværsklasse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningSumInntekt
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningUnderholdskostnad
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningVoksneIHustand
@@ -39,6 +42,7 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.SamværsperiodeGrunnla
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningBarnebidrag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
+import no.nav.bidrag.transport.behandling.felles.grunnlag.UnderholdskostnadPeriode
 import no.nav.bidrag.transport.behandling.vedtak.Behandlingsreferanse
 import no.nav.bidrag.transport.behandling.vedtak.Periode
 import no.nav.bidrag.transport.behandling.vedtak.Sporingsdata
@@ -55,6 +59,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
+import kotlin.Boolean
 
 class TestUtil {
 
@@ -591,7 +596,7 @@ class TestUtil {
                     grunnlagsreferanseListe = listOf(
                         "bostatus_person_PERSON_SØKNADSBARN_20180718_826_20240201",
                     ),
-                    gjelderReferanse = "person_PERSON_BIDRAGSPLIKTIG_20010217_825",
+                    gjelderReferanse = "person_PERSON_BIDRAGSPLIKTIG_20010217_825"
                 ),
                 GrunnlagDto(
                     referanse = "DELBEREGNING_UNDERHOLDSKOSTNAD_person_PERSON_BIDRAGSMOTTAKER_19830916_827_person_PERSON_SØKNADSBARN_20180718_826_202401",
@@ -620,7 +625,7 @@ class TestUtil {
                             andelBeløp = BigDecimal.valueOf(200),
                             beregnetAndelFaktor = BigDecimal.valueOf(100),
                             barnEndeligInntekt = BigDecimal.valueOf(100),
-                            barnetErSelvforsørget = false,
+                            barnetErSelvforsørget = false
                         ),
                     ),
                     grunnlagsreferanseListe = emptyList(),
@@ -646,7 +651,7 @@ class TestUtil {
                             periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
                             summertNettoBarnetillegg = BigDecimal.valueOf(100),
                             summertBruttoBarnetillegg = BigDecimal.valueOf(150),
-                            barnetilleggTypeListe = emptyList(),
+                            barnetilleggTypeListe = emptyList()
                         ),
                     ),
                     grunnlagsreferanseListe = emptyList(),
@@ -661,7 +666,7 @@ class TestUtil {
                             periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
                             summertNettoBarnetillegg = BigDecimal.valueOf(10),
                             summertBruttoBarnetillegg = BigDecimal.valueOf(15),
-                            barnetilleggTypeListe = emptyList(),
+                            barnetilleggTypeListe = emptyList()
                         ),
                     ),
                     grunnlagsreferanseListe = emptyList(),
@@ -674,7 +679,7 @@ class TestUtil {
                     innhold = POJONode(
                         DelberegningVoksneIHustand(
                             periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
-                            borMedAndreVoksne = true,
+                            borMedAndreVoksne = true
                         ),
                     ),
                     grunnlagsreferanseListe = emptyList(),
@@ -703,7 +708,7 @@ class TestUtil {
                     type = Stønadstype.BIDRAG,
                     sak = Saksnummer("1234567"),
                     skyldner = Personident("98765432109"),
-                    kravhaver = Personident("12345678901"),
+                    kravhaver = Personident("D"),
                     mottaker = Personident("16498311338"),
                     førsteIndeksreguleringsår = 2024,
                     innkreving = Innkrevingstype.MED_INNKREVING,
@@ -728,5 +733,7 @@ class TestUtil {
             engangsbeløpListe = emptyList(),
             behandlingsreferanseListe = emptyList(),
         )
+
+
     }
 }
