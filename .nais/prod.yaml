@@ -8,6 +8,7 @@ env:
   BIDRAG_VEDTAK_URL: http://bidrag-vedtak
   BIDRAG_VEDTAK_SCOPE: prod-gcp.bidrag.bidrag-vedtak
   TOPIC_STATISTIKK: bidrag.statistikk
+  TOPIC_STATISTIKK_BIDRAG: bidrag.statistikk-bidrag
   TOPIC_VEDTAK: bidrag.vedtak
 outbound-access-apps:
   - bidrag-vedtak

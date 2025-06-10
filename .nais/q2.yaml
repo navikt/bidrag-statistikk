@@ -8,6 +8,7 @@ env:
   BIDRAG_VEDTAK_URL: http://bidrag-vedtak-q2
   BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-q2
   TOPIC_STATISTIKK: bidrag.statistikk-q2
+  TOPIC_STATISTIKK_BIDRAG: bidrag.statistikk-bidrag
   TOPIC_VEDTAK: bidrag.vedtak-q2
 outbound-access-apps:
   - bidrag-vedtak-q2
