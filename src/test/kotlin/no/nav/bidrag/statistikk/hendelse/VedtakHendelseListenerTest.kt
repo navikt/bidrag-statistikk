@@ -267,7 +267,5 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
         val hendelser = captor.allValues
         assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isNull()
-
-
     }
 }

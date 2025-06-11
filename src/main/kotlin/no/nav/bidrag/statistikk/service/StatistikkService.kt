@@ -114,8 +114,10 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     private fun behandleVedtakHendelseBidrag(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
         vedtakDto?.stønadsendringListe?.filter {
-            it.type == Stønadstype.BIDRAG || it.type == Stønadstype.BIDRAG18AAR ||
-                it.type == Stønadstype.OPPFOSTRINGSBIDRAG && it.beslutning == Beslutningstype.ENDRING
+            it.type == Stønadstype.BIDRAG ||
+                it.type == Stønadstype.BIDRAG18AAR ||
+                it.type == Stønadstype.OPPFOSTRINGSBIDRAG &&
+                it.beslutning == Beslutningstype.ENDRING
         }
             ?.forEach { stønadsendring ->
                 val bidragHendelse = BidragHendelse(
