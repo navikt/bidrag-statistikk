@@ -728,5 +728,48 @@ class TestUtil {
             engangsbeløpListe = emptyList(),
             behandlingsreferanseListe = emptyList(),
         )
+
+        fun byggVedtakDtoBidragUtenGrunnlag(): VedtakDto = VedtakDto(
+            kilde = Vedtakskilde.MANUELT,
+            type = Vedtakstype.ENDRING,
+            opprettetAv = "ABCDEFG",
+            opprettetAvNavn = "",
+            kildeapplikasjon = "bidrag-behandling",
+            vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            enhetsnummer = Enhetsnummer("ABCD"),
+            innkrevingUtsattTilDato = LocalDate.now(),
+            fastsattILand = "NO",
+            opprettetTidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            grunnlagListe = emptyList(),
+            stønadsendringListe = listOf(
+                StønadsendringDto(
+                    type = Stønadstype.BIDRAG,
+                    sak = Saksnummer("1234567"),
+                    skyldner = Personident("98765432109"),
+                    kravhaver = Personident("12345678901"),
+                    mottaker = Personident("16498311338"),
+                    førsteIndeksreguleringsår = 2024,
+                    innkreving = Innkrevingstype.MED_INNKREVING,
+                    Beslutningstype.ENDRING,
+                    omgjørVedtakId = null,
+                    eksternReferanse = null,
+                    grunnlagReferanseListe = emptyList(),
+                    periodeListe = listOf(
+                        VedtakPeriodeDto(
+                            periode = ÅrMånedsperiode(YearMonth.of(2024, 7), YearMonth.of(2024, 8)),
+                            beløp = BigDecimal.valueOf(2),
+                            valutakode = "NOK",
+                            resultatkode = "A",
+                            delytelseId = "delytelseId1",
+                            grunnlagReferanseListe = listOf(
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            engangsbeløpListe = emptyList(),
+            behandlingsreferanseListe = emptyList(),
+        )
     }
 }
