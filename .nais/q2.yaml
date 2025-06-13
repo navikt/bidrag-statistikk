@@ -12,6 +12,8 @@ env:
   TOPIC_VEDTAK: bidrag.vedtak-q2
 outbound-access-apps:
   - bidrag-vedtak-q2
+  - logging
+    nais-system
 spec:
   replicas:
     min: 1
