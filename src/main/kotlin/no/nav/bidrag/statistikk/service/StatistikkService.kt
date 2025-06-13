@@ -65,7 +65,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     saksnr = stønadsendring.sak.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = vedtakDto.kildeapplikasjon != bidragBehandling,
+                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
                     forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataForskudd(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
@@ -128,7 +128,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     skyldner = stønadsendring.skyldner.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = vedtakDto.kildeapplikasjon != bidragBehandling,
+                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
                     bidragPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataBidrag(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 

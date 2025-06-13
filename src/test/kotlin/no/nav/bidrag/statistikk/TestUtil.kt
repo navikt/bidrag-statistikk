@@ -437,7 +437,7 @@ class TestUtil {
             type = Vedtakstype.ENDRING,
             opprettetAv = "ABCDEFG",
             opprettetAvNavn = "",
-            kildeapplikasjon = "bidrag-behandling",
+            kildeapplikasjon = "bidrag-behandling-q2",
             vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
             unikReferanse = null,
             enhetsnummer = Enhetsnummer("ABCD"),

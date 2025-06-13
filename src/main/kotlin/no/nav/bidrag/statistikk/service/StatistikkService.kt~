@@ -76,7 +76,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.barnBorMedBM == null ||
                                     grunnlagsdata.inntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon == bidragBehandling
+                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for forskuddsvedtak med vedtaksid: {}, vedtakstype: {}, " +
@@ -142,7 +142,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.bPInntektListe?.isEmpty() == true ||
                                     grunnlagsdata.bMInntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon == bidragBehandling
+                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for bidragsvedtak med vedtaksid: {}, vedtakstype: {}, resultatkode: {}, beløp: {}",
