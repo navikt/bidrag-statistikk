@@ -27,8 +27,10 @@ spec:
     outbound:
       rules:
       {{#each outbound-access-apps}}
-          - application: {{this}}
+         - application: {{this}}
       {{/each}}
+      - application: logging
+        namespace: nais-system
   image: {{ image }}
   kafka:
     pool: {{ kafka.pool }}
