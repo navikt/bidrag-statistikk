@@ -16,8 +16,7 @@ interface BehandleHendelseService {
 
 @Service
 @Transactional
-class DefaultBehandleHendelseService(private val statistikkService: StatistikkService) :
-    BehandleHendelseService {
+class DefaultBehandleHendelseService(private val statistikkService: StatistikkService) : BehandleHendelseService {
     override fun behandleHendelse(vedtakHendelse: VedtakHendelse) {
         if (vedtakSkalBehandles(vedtakHendelse)) {
             LOGGER.info("Behandler vedtakHendelse med vedtaksid: ${vedtakHendelse.id}")
@@ -26,7 +25,11 @@ class DefaultBehandleHendelseService(private val statistikkService: StatistikkSe
         }
     }
 
-    private fun vedtakSkalBehandles(vedtakHendelse: VedtakHendelse): Boolean {
-        return vedtakHendelse.stønadsendringListe?.any { it.type == Stønadstype.FORSKUDD && it.beslutning == Beslutningstype.ENDRING } ?: false
-    }
+    private fun vedtakSkalBehandles(vedtakHendelse: VedtakHendelse): Boolean = vedtakHendelse.stønadsendringListe?.any {
+        it.type == Stønadstype.FORSKUDD ||
+            it.type == Stønadstype.BIDRAG ||
+            it.type == Stønadstype.BIDRAG18AAR ||
+            it.type == Stønadstype.OPPFOSTRINGSBIDRAG &&
+            it.beslutning == Beslutningstype.ENDRING
+    } ?: false
 }

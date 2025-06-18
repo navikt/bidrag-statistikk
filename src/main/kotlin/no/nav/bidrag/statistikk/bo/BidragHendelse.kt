@@ -1,0 +1,35 @@
+package no.nav.bidrag.statistikk.bo
+
+import no.nav.bidrag.transport.behandling.statistikk.Inntekt
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+data class BidragHendelse(
+    val vedtaksid: Long,
+    val vedtakstidspunkt: LocalDateTime,
+    val type: String,
+    val saksnr: String,
+    val skyldner: String,
+    val kravhaver: String,
+    val mottaker: String,
+    val historiskVedtak: Boolean,
+    val bidragPeriodeListe: List<BidragPeriode>,
+)
+
+data class BidragPeriode(
+    val periodeFra: LocalDate,
+    val periodeTil: LocalDate?,
+    val beløp: BigDecimal?,
+    val resultat: String, // hvilke er tilgjengelig?
+    val bidragsevne: BigDecimal?,
+    val underholdskostnad: BigDecimal?,
+    val bPsAndelUnderholdskostnad: BigDecimal?,
+    val samværsfradrag: BigDecimal?,
+    val nettoBarnetilleggBP: BigDecimal?,
+    val nettoBarnetilleggBM: BigDecimal?,
+    val bPBorMedAndreVoksne: Boolean?,
+    val deltBosted: Boolean?,
+    val bPInntektListe: List<Inntekt>?,
+    val bMInntektListe: List<Inntekt>?,
+)

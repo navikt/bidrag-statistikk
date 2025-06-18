@@ -4,6 +4,8 @@ import no.nav.bidrag.domene.enums.inntekt.Inntektsrapportering
 import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.statistikk.BidragStatistikkTest
+import no.nav.bidrag.statistikk.bo.BidragHendelse
+import no.nav.bidrag.statistikk.bo.BidragPeriode
 import no.nav.bidrag.statistikk.hendelse.StatistikkKafkaEventProducer
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddPeriode
@@ -35,8 +37,8 @@ class HendelserServiceTest {
 
     @Test
     @Suppress("NonAsciiCharacters")
-    fun `skal opprette hendelse`() {
-        hendelserService.opprettHendelse(
+    fun `skal opprette forskuddshendelse`() {
+        hendelserService.opprettForskuddshendelse(
             ForskuddHendelse(
                 vedtaksid = 1,
                 vedtakstidspunkt = LocalDateTime.now(),
@@ -67,5 +69,52 @@ class HendelserServiceTest {
         )
 
         verify(statistikkEventProducerMock).publishForskudd(anyOrNull())
+    }
+
+    @Test
+    @Suppress("NonAsciiCharacters")
+    fun `skal opprette bidragshendelse`() {
+        hendelserService.opprettBidragshendelse(
+            BidragHendelse(
+                vedtaksid = 1,
+                vedtakstidspunkt = LocalDateTime.now(),
+                type = Vedtakstype.ENDRING.name,
+                saksnr = "123",
+                skyldner = "23456",
+                kravhaver = "12345",
+                mottaker = "54321",
+                historiskVedtak = false,
+                bidragPeriodeListe = listOf(
+                    BidragPeriode(
+                        periodeFra = LocalDate.of(2021, 1, 1),
+                        periodeTil = LocalDate.of(2022, 1, 1),
+                        beløp = BigDecimal(1000),
+                        resultat = Beslutningstype.ENDRING.name,
+                        bidragsevne = BigDecimal(1000),
+                        underholdskostnad = BigDecimal(1000),
+                        bPsAndelUnderholdskostnad = BigDecimal(1000),
+                        samværsfradrag = BigDecimal(1000),
+                        nettoBarnetilleggBP = BigDecimal(1000),
+                        nettoBarnetilleggBM = BigDecimal(1000),
+                        bPBorMedAndreVoksne = true,
+                        deltBosted = true,
+                        bPInntektListe = listOf(
+                            Inntekt(
+                                beløp = BigDecimal.valueOf(10000),
+                                type = Inntektsrapportering.AINNTEKT_BEREGNET_12MND.name,
+                            ),
+                        ),
+                        bMInntektListe = listOf(
+                            Inntekt(
+                                beløp = BigDecimal.valueOf(10000),
+                                type = Inntektsrapportering.AINNTEKT_BEREGNET_12MND.name,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        verify(statistikkEventProducerMock).publishBidrag(anyOrNull())
     }
 }

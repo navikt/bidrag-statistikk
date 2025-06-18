@@ -60,6 +60,5 @@ class BidragStatistikkTestConfig {
     }
 
     @Bean
-    fun vedtakHendelseListener(jsonMapperService: JsonMapperService, behandeHendelseService: BehandleHendelseService): VedtakHendelseListener =
-        PojoVedtakHendelseListener(jsonMapperService, behandeHendelseService)
+    fun vedtakHendelseListener(jsonMapperService: JsonMapperService, behandeHendelseService: BehandleHendelseService): VedtakHendelseListener = PojoVedtakHendelseListener(jsonMapperService, behandeHendelseService)
 }
