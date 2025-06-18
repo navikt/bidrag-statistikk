@@ -173,8 +173,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                             samværsfradrag = grunnlagsdata?.samværsfradrag,
                             nettoBarnetilleggBP = grunnlagsdata?.nettoBarnetilleggBP,
                             nettoBarnetilleggBM = grunnlagsdata?.nettoBarnetilleggBM,
-                            bPBorMedAndreVoksne = grunnlagsdata?.bPBorMedAndreVoksne,
-                            deltBosted = grunnlagsdata?.deltBosted,
+                            bPBorMedAndreVoksne = grunnlagsdata?.bPBorMedAndreVoksne ?: false,
+                            deltBosted = grunnlagsdata?.deltBosted ?: false,
                             bPInntektListe = grunnlagsdata?.bPInntektListe ?: emptyList(),
                             bMInntektListe = grunnlagsdata?.bMInntektListe ?: emptyList(),
                         )
