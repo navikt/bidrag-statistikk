@@ -42,7 +42,7 @@ import java.time.LocalDate
 @Transactional
 class StatistikkService(val hendelserService: HendelserService, val bidragVedtakConsumer: BidragVedtakConsumer) {
 
-    val bidragBehandling = "bidrag-behandling"
+    val bisys = "bisys"
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
@@ -67,7 +67,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     saksnr = stønadsendring.sak.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
+                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
                     forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataForskudd(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
@@ -78,7 +78,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.barnBorMedBM == null ||
                                     grunnlagsdata.inntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
+                            !vedtakDto.kildeapplikasjon.contains(bisys)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for forskuddsvedtak med vedtaksid: {}, vedtakstype: {}, " +
@@ -130,7 +130,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     skyldner = stønadsendring.skyldner.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
+                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
                     bidragPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataBidrag(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
@@ -144,7 +144,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.bPInntektListe?.isEmpty() == true ||
                                     grunnlagsdata.bMInntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
+                            !vedtakDto.kildeapplikasjon.contains(bisys)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for bidragsvedtak med vedtaksid: {}, vedtakstype: {}, resultatkode: {}, beløp: {}",
