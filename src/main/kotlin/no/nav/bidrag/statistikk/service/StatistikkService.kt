@@ -42,7 +42,7 @@ import java.time.LocalDate
 @Transactional
 class StatistikkService(val hendelserService: HendelserService, val bidragVedtakConsumer: BidragVedtakConsumer) {
 
-    val bidragBehandling = "bidrag-behandling"
+    val bisys = "bisys"
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
@@ -67,7 +67,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     saksnr = stønadsendring.sak.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
+                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
                     forskuddPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataForskudd(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
@@ -78,7 +78,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.barnBorMedBM == null ||
                                     grunnlagsdata.inntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
+                            !vedtakDto.kildeapplikasjon.contains(bisys)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for forskuddsvedtak med vedtaksid: {}, vedtakstype: {}, " +
@@ -130,7 +130,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     skyldner = stønadsendring.skyldner.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = !vedtakDto.kildeapplikasjon.contains(bidragBehandling),
+                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
                     bidragPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata = finnGrunnlagsdataBidrag(vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
@@ -140,11 +140,11 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.underholdskostnad == null ||
                                     grunnlagsdata.bPsAndelUnderholdskostnad == null ||
                                     grunnlagsdata.bPBorMedAndreVoksne == null ||
-                                    grunnlagsdata.deltBosted == null ||
+                                    grunnlagsdata.samværsklasse == null ||
                                     grunnlagsdata.bPInntektListe?.isEmpty() == true ||
                                     grunnlagsdata.bMInntektListe?.isEmpty() == true
                                 ) &&
-                            vedtakDto.kildeapplikasjon.contains(bidragBehandling)
+                            !vedtakDto.kildeapplikasjon.contains(bisys)
                         ) {
                             SECURE_LOGGER.info(
                                 "Fullstendig grunnlag ikke funnet for bidragsvedtak med vedtaksid: {}, vedtakstype: {}, resultatkode: {}, beløp: {}",
@@ -174,7 +174,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                             nettoBarnetilleggBP = grunnlagsdata?.nettoBarnetilleggBP,
                             nettoBarnetilleggBM = grunnlagsdata?.nettoBarnetilleggBM,
                             bPBorMedAndreVoksne = grunnlagsdata?.bPBorMedAndreVoksne,
-                            deltBosted = grunnlagsdata?.deltBosted,
+                            samværsklasse = grunnlagsdata?.samværsklasse,
                             bPInntektListe = grunnlagsdata?.bPInntektListe ?: emptyList(),
                             bMInntektListe = grunnlagsdata?.bMInntektListe ?: emptyList(),
                         )
@@ -226,7 +226,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBP),
             nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBM),
             bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
-            deltBosted = grunnlagListe.finnDeltBostedIPeriode(grunnlagsreferanseListe),
+            samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(grunnlagsreferanseListe),
             bPInntektListe = grunnlagListe.finnInntekterBidrag(referanseBP, søknadsbarnReferanse),
             bMInntektListe = grunnlagListe.finnInntekterBidrag(referanseBM, søknadsbarnReferanse),
         )
@@ -304,29 +304,29 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
     fun List<GrunnlagDto>.finnBpsAndelUnderholdskostnadForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): BigDecimal? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
 
-        val underholdskostand = finnOgKonverterGrunnlagSomErReferertAv<DelberegningBidragspliktigesAndel>(
+        val bPsAndelUnderholdskostand = finnOgKonverterGrunnlagSomErReferertAv<DelberegningBidragspliktigesAndel>(
             Grunnlagstype.DELBEREGNING_BIDRAGSPLIKTIGES_ANDEL,
             sluttberegning,
         ).firstOrNull()
-        return underholdskostand?.innhold?.andelBeløp
+        return bPsAndelUnderholdskostand?.innhold?.andelBeløp
     }
 
     fun List<GrunnlagDto>.finnSamværsfradragForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): BigDecimal? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
 
-        val underholdskostand = finnOgKonverterGrunnlagSomErReferertAv<DelberegningSamværsfradrag>(
+        val samværsfradrag = finnOgKonverterGrunnlagSomErReferertAv<DelberegningSamværsfradrag>(
             Grunnlagstype.DELBEREGNING_SAMVÆRSFRADRAG,
             sluttberegning,
         ).firstOrNull()
-        return underholdskostand?.innhold?.beløp
+        return samværsfradrag?.innhold?.beløp
     }
 
     fun List<GrunnlagDto>.finnNettoBarnetilleggForPeriode(referanseTilRolle: String): BigDecimal? {
-        val underholdskostand = filtrerOgKonverterBasertPåFremmedReferanse<DelberegningNettoBarnetillegg>(
+        val nettoBarnetillegg = filtrerOgKonverterBasertPåFremmedReferanse<DelberegningNettoBarnetillegg>(
             Grunnlagstype.DELBEREGNING_NETTO_BARNETILLEGG,
             referanseTilRolle,
         ).firstOrNull()
-        return underholdskostand?.innhold?.summertNettoBarnetillegg
+        return nettoBarnetillegg?.innhold?.summertNettoBarnetillegg
     }
 
     fun List<GrunnlagDto>.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Boolean? {
@@ -338,13 +338,13 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         return bostatusPeriode?.innhold?.borMedAndreVoksne
     }
 
-    fun List<GrunnlagDto>.finnDeltBostedIPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Boolean? {
+    fun List<GrunnlagDto>.finnSamværsklasseIPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>): Samværsklasse? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
         val samværsperiode = finnOgKonverterGrunnlagSomErReferertAv<SamværsperiodeGrunnlag>(
             Grunnlagstype.SAMVÆRSPERIODE,
             sluttberegning,
         ).firstOrNull()
-        return samværsperiode?.innhold?.samværsklasse == Samværsklasse.DELT_BOSTED
+        return samværsperiode?.innhold?.samværsklasse
     }
 
     fun List<GrunnlagDto>.finnInntekterBidrag(referanseTilRolle: String, søknadsbarnReferanse: String): List<Inntekt>? {
@@ -385,7 +385,7 @@ data class GrunnlagsdataBidrag(
     val nettoBarnetilleggBP: BigDecimal?,
     val nettoBarnetilleggBM: BigDecimal?,
     val bPBorMedAndreVoksne: Boolean?,
-    val deltBosted: Boolean?,
+    val samværsklasse: Samværsklasse?,
     val bPInntektListe: List<Inntekt>?,
     val bMInntektListe: List<Inntekt>?,
 )
