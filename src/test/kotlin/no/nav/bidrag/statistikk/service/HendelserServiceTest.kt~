@@ -98,6 +98,7 @@ class HendelserServiceTest {
                         nettoBarnetilleggBP = BigDecimal(1000),
                         nettoBarnetilleggBM = BigDecimal(1000),
                         bPBorMedAndreVoksne = true,
+                        deltBosted = true,
                         samværsklasse = Samværsklasse.DELT_BOSTED,
                         bPInntektListe = listOf(
                             Inntekt(

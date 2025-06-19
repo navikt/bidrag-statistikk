@@ -2,7 +2,6 @@ package no.nav.bidrag.statistikk.hendelse
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nav.bidrag.domene.enums.beregning.Samværsklasse
 import no.nav.bidrag.statistikk.BidragStatistikkTest
 import no.nav.bidrag.statistikk.BidragStatistikkTest.Companion.TEST_PROFILE
 import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDtoBidrag
@@ -225,7 +224,7 @@ class VedtakHendelseListenerTest {
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isEqualTo(BigDecimal.valueOf(100))
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBM).isEqualTo(BigDecimal.valueOf(10))
         assertThat(hendelser[0].bidragPeriodeListe.first().bPBorMedAndreVoksne).isTrue
-        assertThat(hendelser[0].bidragPeriodeListe.first().samværsklasse).isEqualTo(Samværsklasse.DELT_BOSTED)
+        assertThat(hendelser[0].bidragPeriodeListe.first().deltBosted).isTrue
     }
 
     @Test

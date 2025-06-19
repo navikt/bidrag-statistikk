@@ -30,6 +30,7 @@ data class BidragPeriode(
     val nettoBarnetilleggBP: BigDecimal?,
     val nettoBarnetilleggBM: BigDecimal?,
     val bPBorMedAndreVoksne: Boolean?,
+    val deltBosted: Boolean?,
     val samværsklasse: Samværsklasse?,
     val bPInntektListe: List<Inntekt>?,
     val bMInntektListe: List<Inntekt>?,
