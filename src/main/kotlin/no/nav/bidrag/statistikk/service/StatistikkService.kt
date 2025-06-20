@@ -137,7 +137,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     skyldner = stønadsendring.skyldner.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
+                    historiskVedtak = vedtakFraBisys,
                     bidragPeriodeListe = stønadsendring.periodeListe.map { periode ->
                         val grunnlagsdata =
                             finnGrunnlagsdataBidrag(vedtakErAldersjustering, vedtakFraBisys, vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
