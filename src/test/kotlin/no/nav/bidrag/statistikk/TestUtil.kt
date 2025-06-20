@@ -34,10 +34,13 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningUnderholds
 import no.nav.bidrag.transport.behandling.felles.grunnlag.DelberegningVoksneIHustand
 import no.nav.bidrag.transport.behandling.felles.grunnlag.GrunnlagDto
 import no.nav.bidrag.transport.behandling.felles.grunnlag.InntektsrapporteringPeriode
+import no.nav.bidrag.transport.behandling.felles.grunnlag.KopiDelberegningBidragspliktigesAndel
+import no.nav.bidrag.transport.behandling.felles.grunnlag.KopiSamværsperiodeGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.Person
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SamværsperiodeGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningBarnebidrag
+import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningBarnebidragAldersjustering
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
 import no.nav.bidrag.transport.behandling.vedtak.Behandlingsreferanse
 import no.nav.bidrag.transport.behandling.vedtak.Periode
@@ -749,6 +752,168 @@ class TestUtil {
             fastsattILand = "NO",
             opprettetTidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
             grunnlagListe = emptyList(),
+            stønadsendringListe = listOf(
+                StønadsendringDto(
+                    type = Stønadstype.BIDRAG,
+                    sak = Saksnummer("1234567"),
+                    skyldner = Personident("98765432109"),
+                    kravhaver = Personident("12345678901"),
+                    mottaker = Personident("16498311338"),
+                    sisteVedtaksid = null,
+                    førsteIndeksreguleringsår = 2024,
+                    innkreving = Innkrevingstype.MED_INNKREVING,
+                    beslutning = Beslutningstype.ENDRING,
+                    omgjørVedtakId = null,
+                    eksternReferanse = null,
+                    grunnlagReferanseListe = emptyList(),
+                    periodeListe = listOf(
+                        VedtakPeriodeDto(
+                            periode = ÅrMånedsperiode(YearMonth.of(2024, 7), YearMonth.of(2024, 8)),
+                            beløp = BigDecimal.valueOf(2),
+                            valutakode = "NOK",
+                            resultatkode = "A",
+                            delytelseId = "delytelseId1",
+                            grunnlagReferanseListe = listOf(
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            engangsbeløpListe = emptyList(),
+            behandlingsreferanseListe = emptyList(),
+        )
+
+        fun byggVedtakDtoAldersjusteringBidrag(): VedtakDto = VedtakDto(
+            kilde = Vedtakskilde.AUTOMATISK,
+            type = Vedtakstype.ENDRING,
+            opprettetAv = "ABCDEFG",
+            opprettetAvNavn = "",
+            kildeapplikasjon = "bidrag-automatisk-jobb",
+            vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            unikReferanse = null,
+            enhetsnummer = Enhetsnummer("ABCD"),
+            innkrevingUtsattTilDato = LocalDate.now(),
+            fastsattILand = "NO",
+            opprettetTidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
+            grunnlagListe = listOf(
+                GrunnlagDto(
+                    referanse = "person_PERSON_BIDRAGSPLIKTIG_20010217_825",
+                    type = Grunnlagstype.PERSON_BIDRAGSPLIKTIG,
+                    innhold = POJONode(
+                        Person(
+                            ident = Personident("98765432109"),
+                            fødselsdato = LocalDate.parse("2001-02-17"),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                ),
+                GrunnlagDto(
+                    referanse = "person_PERSON_BIDRAGSMOTTAKER_19830916_827",
+                    type = Grunnlagstype.PERSON_BIDRAGSMOTTAKER,
+                    innhold = POJONode(
+                        Person(
+                            ident = Personident("16498311338"),
+                            fødselsdato = LocalDate.parse("1983-07-18"),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                ),
+                GrunnlagDto(
+                    referanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                    type = Grunnlagstype.PERSON_SØKNADSBARN,
+                    innhold = POJONode(
+                        Person(
+                            ident = Personident("12345678901"),
+                            navn = "Ola Nordmann",
+                            fødselsdato = LocalDate.parse("2018-07-18"),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                ),
+                GrunnlagDto(
+                    referanse = "sluttberegning_person_PERSON_SØKNADSBARN_20180718_826_202407",
+                    type = Grunnlagstype.SLUTTBEREGNING_BARNEBIDRAG_ALDERSJUSTERING,
+                    innhold = POJONode(
+                        SluttberegningBarnebidragAldersjustering(
+                            periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
+                            beregnetBeløp = BigDecimal.valueOf(1),
+                            resultatBeløp = BigDecimal.valueOf(2),
+                            bpAndelBeløp = BigDecimal.valueOf(3),
+                            bpAndelFaktorVedDeltBosted = BigDecimal.valueOf(0.6),
+                            deltBosted = false,
+                        ),
+                    ),
+                    grunnlagsreferanseListe = listOf(
+                        "DELBEREGNING_UNDERHOLDSKOSTNAD_person_PERSON_BIDRAGSMOTTAKER_19830916_827_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                        "delberegning_KOPI_DELBEREGNING_BIDRAGSPLIKTIGES_ANDEL_UNDERHOLDSKOSTNAD_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                        "DELBEREGNING_SAMVÆRSFRADRAG_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                        "person_PERSON_BIDRAGSPLIKTIG_20010217_825",
+                        "person_PERSON_BIDRAGSMOTTAKER_19830916_827",
+                        "person_PERSON_SØKNADSBARN_20180718_826",
+                        "DELBEREGNING_KOPI_SAMVÆRSPERIODE_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_20240201",
+                    ),
+                    gjelderReferanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                ),
+                GrunnlagDto(
+                    referanse = "DELBEREGNING_UNDERHOLDSKOSTNAD_person_PERSON_BIDRAGSMOTTAKER_19830916_827_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                    type = Grunnlagstype.DELBEREGNING_UNDERHOLDSKOSTNAD,
+                    innhold = POJONode(
+                        DelberegningUnderholdskostnad(
+                            periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
+                            forbruksutgift = BigDecimal.valueOf(1000),
+                            boutgift = BigDecimal.valueOf(1000),
+                            barnetilsynMedStønad = BigDecimal.valueOf(100),
+                            nettoTilsynsutgift = BigDecimal.valueOf(100),
+                            barnetrygd = BigDecimal.valueOf(100),
+                            underholdskostnad = BigDecimal.valueOf(500),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                    gjelderReferanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                ),
+                GrunnlagDto(
+                    referanse = "delberegning_KOPI_DELBEREGNING_BIDRAGSPLIKTIGES_ANDEL_UNDERHOLDSKOSTNAD_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                    type = Grunnlagstype.KOPI_DELBEREGNING_BIDRAGSPLIKTIGES_ANDEL,
+                    innhold = POJONode(
+                        KopiDelberegningBidragspliktigesAndel(
+                            periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
+                            fraVedtakId = 1,
+                            endeligAndelFaktor = BigDecimal.valueOf(0.6),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                    gjelderReferanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                ),
+                GrunnlagDto(
+                    referanse = "DELBEREGNING_SAMVÆRSFRADRAG_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_202401",
+                    type = Grunnlagstype.DELBEREGNING_SAMVÆRSFRADRAG,
+                    innhold = POJONode(
+                        DelberegningSamværsfradrag(
+                            periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
+                            beløp = BigDecimal.valueOf(150),
+                        ),
+                    ),
+                    grunnlagsreferanseListe = emptyList(),
+                    gjelderReferanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                ),
+                GrunnlagDto(
+                    referanse = "DELBEREGNING_KOPI_SAMVÆRSPERIODE_person_PERSON_BIDRAGSPLIKTIG_20010217_825_person_PERSON_SØKNADSBARN_20180718_826_20240201",
+                    type = Grunnlagstype.KOPI_SAMVÆRSPERIODE,
+                    innhold = POJONode(
+                        KopiSamværsperiodeGrunnlag(
+                            periode = ÅrMånedsperiode(YearMonth.now(), YearMonth.now()),
+                            fraVedtakId = 1,
+                            samværsklasse = Samværsklasse.SAMVÆRSKLASSE_2,
+                        ),
+                    ),
+                    grunnlagsreferanseListe = listOf(
+                        "innhentet_husstandsmedlem_person_PERSON_BIDRAGSMOTTAKER_19830916_827_person_PERSON_SØKNADSBARN_20180718_826",
+                    ),
+                    gjelderBarnReferanse = "person_PERSON_SØKNADSBARN_20180718_826",
+                    gjelderReferanse = "person_PERSON_BIDRAGSPLIKTIG_20010217_825",
+                ),
+            ),
             stønadsendringListe = listOf(
                 StønadsendringDto(
                     type = Stønadstype.BIDRAG,
