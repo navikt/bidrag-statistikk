@@ -65,7 +65,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ALDERSJUSTERING",
-              "id":"5021731",
+              "id":"9921731",
               "opprettetAv":"X123456",
               "kildeapplikasjon":"Bisys",              
               "vedtakstidspunkt":"2022-01-11T10:00:00.000001",              
@@ -111,7 +111,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ALDERSJUSTERING",
-              "id":"5021731",
+              "id":"9921731",
               "opprettetAv":"X123456",
               "kildeapplikasjon":"Bisys",              
               "vedtakstidspunkt":"2022-01-11T10:00:00.000001",              
