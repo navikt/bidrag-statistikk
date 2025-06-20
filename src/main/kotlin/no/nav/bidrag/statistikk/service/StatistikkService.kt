@@ -119,6 +119,9 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     private fun behandleVedtakHendelseBidrag(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
         val vedtakErAldersjustering = vedtakHendelse.type == Vedtakstype.ALDERSJUSTERING
+        // Spesialinnhenting av grunnlag på aldersjusteringsvedtak skal bare gjøres for vedtak som ikke er fra Bisys.
+        // Aldersjusteringsvedtak gjort i Bisys har samme grunnlagsstruktur som ordinære bidragsvedtak.
+        val vedtakFraBisys = vedtakHendelse.kildeapplikasjon.contains(bisys)
         vedtakDto?.stønadsendringListe?.filter {
             it.type == Stønadstype.BIDRAG ||
                 it.type == Stønadstype.BIDRAG18AAR ||
@@ -134,9 +137,10 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                     skyldner = stønadsendring.skyldner.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
                     mottaker = stønadsendring.mottaker.verdi,
-                    historiskVedtak = vedtakDto.kildeapplikasjon.contains(bisys),
+                    historiskVedtak = vedtakFraBisys,
                     bidragPeriodeListe = stønadsendring.periodeListe.map { periode ->
-                        val grunnlagsdata = finnGrunnlagsdataBidrag(vedtakErAldersjustering, vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
+                        val grunnlagsdata =
+                            finnGrunnlagsdataBidrag(vedtakErAldersjustering, vedtakFraBisys, vedtakDto.grunnlagListe, periode.grunnlagReferanseListe)
 
                         // Sjekker på de grunnlagstypene som alltid skal være med og logger hvis noen av de mangler
                         if ((
@@ -148,7 +152,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                     grunnlagsdata.bPInntektListe?.isEmpty() == true ||
                                     grunnlagsdata.bMInntektListe?.isEmpty() == true
                                 ) &&
-                            !vedtakDto.kildeapplikasjon.contains(bisys) &&
+                            !vedtakFraBisys &&
                             !vedtakErAldersjustering
                         ) {
                             SECURE_LOGGER.info(
@@ -214,6 +218,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     private fun finnGrunnlagsdataBidrag(
         vedtakErAldersjustering: Boolean,
+        vedtakFraBisys: Boolean,
         grunnlagListe: List<GrunnlagDto>,
         grunnlagsreferanseListe: List<Grunnlagsreferanse>,
     ): GrunnlagsdataBidrag? {
@@ -230,12 +235,16 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         val respons = GrunnlagsdataBidrag(
             bidragsevne = grunnlagListe.finnBidragevneForPeriode(grunnlagsreferanseListe),
             underholdskostnad = grunnlagListe.finnUnderholdskostnadForPeriode(grunnlagsreferanseListe),
-            bPsAndelUnderholdskostnad = grunnlagListe.finnBpsAndelUnderholdskostnadForPeriode(vedtakErAldersjustering, grunnlagsreferanseListe),
+            bPsAndelUnderholdskostnad = grunnlagListe.finnBpsAndelUnderholdskostnadForPeriode(
+                vedtakErAldersjustering,
+                vedtakFraBisys,
+                grunnlagsreferanseListe,
+            ),
             samværsfradrag = grunnlagListe.finnSamværsfradragForPeriode(grunnlagsreferanseListe),
             nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBP),
             nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBM),
             bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
-            samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, grunnlagsreferanseListe),
+            samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, vedtakFraBisys, grunnlagsreferanseListe),
             bPInntektListe = grunnlagListe.finnInntekterBidrag(referanseBP, søknadsbarnReferanse),
             bMInntektListe = grunnlagListe.finnInntekterBidrag(referanseBM, søknadsbarnReferanse),
         )
@@ -312,11 +321,12 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     fun List<GrunnlagDto>.finnBpsAndelUnderholdskostnadForPeriode(
         vedtakErAldersjustering: Boolean,
+        vedtakFraBisys: Boolean,
         grunnlagsreferanseListe: List<Grunnlagsreferanse>,
     ): BigDecimal? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
 
-        if (vedtakErAldersjustering) {
+        if (vedtakErAldersjustering && !vedtakFraBisys) {
             return sluttberegning.innholdTilObjekt<SluttberegningBarnebidragAldersjustering>().bpAndelBeløp
         } else {
             val bPsAndelUnderholdskostand = finnOgKonverterGrunnlagSomErReferertAv<DelberegningBidragspliktigesAndel>(
@@ -356,10 +366,11 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     fun List<GrunnlagDto>.finnSamværsklasseIPeriode(
         vedtakErAldersjustering: Boolean,
+        vedtakFraBisys: Boolean,
         grunnlagsreferanseListe: List<Grunnlagsreferanse>,
     ): Samværsklasse? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-        if (vedtakErAldersjustering) {
+        if (vedtakErAldersjustering && !vedtakFraBisys) {
             val samværsperiode = finnOgKonverterGrunnlagSomErReferertAv<KopiSamværsperiodeGrunnlag>(
                 Grunnlagstype.KOPI_SAMVÆRSPERIODE,
                 sluttberegning,
