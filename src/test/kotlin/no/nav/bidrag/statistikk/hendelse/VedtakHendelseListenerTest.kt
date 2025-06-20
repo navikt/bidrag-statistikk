@@ -5,6 +5,7 @@ import io.mockk.every
 import no.nav.bidrag.domene.enums.beregning.Samværsklasse
 import no.nav.bidrag.statistikk.BidragStatistikkTest
 import no.nav.bidrag.statistikk.BidragStatistikkTest.Companion.TEST_PROFILE
+import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDtoAldersjusteringBidrag
 import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDtoBidrag
 import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDtoBidragUtenGrunnlag
 import no.nav.bidrag.statistikk.TestUtil.Companion.byggVedtakDtoForskudd
@@ -64,7 +65,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ALDERSJUSTERING",
-              "id":"5021731",
+              "id":"9921731",
               "opprettetAv":"X123456",
               "kildeapplikasjon":"Bisys",              
               "vedtakstidspunkt":"2022-01-11T10:00:00.000001",              
@@ -110,7 +111,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ALDERSJUSTERING",
-              "id":"5021731",
+              "id":"9921731",
               "opprettetAv":"X123456",
               "kildeapplikasjon":"Bisys",              
               "vedtakstidspunkt":"2022-01-11T10:00:00.000001",              
@@ -265,5 +266,60 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
         val hendelser = captor.allValues
         assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isNull()
+    }
+
+    @Test
+    fun `skal lese vedtakshendelse for aldersjustering uten feil`() {
+        val captor = argumentCaptor<BidragHendelse>()
+        stubHenteVedtak(byggVedtakDtoAldersjusteringBidrag())
+        vedtakHendelseListener.lesHendelse(
+            """
+            {
+              "kilde":"AUTOMATISK",
+              "type":"ALDERSJUSTERING",
+              "id":"1",
+              "opprettetAv":"ABCDEFG",
+              "kildeapplikasjon":"bidrag-automatisk-jobb",              
+              "vedtakstidspunkt":"2020-01-01T23:34:55.869121094",              
+              "enhetsnummer":"ABCD",
+              "opprettetTidspunkt":"2020-01-01T23:34:55.869121094",    
+              "stønadsendringListe": [
+                {
+                 "type": "BIDRAG",
+                 "sak": "1234567",
+                 "skyldner": "98765432109",
+                 "kravhaver": "12345678901",
+                 "mottaker": "16498311338",
+                 "innkreving": "MED_INNKREVING",
+                 "beslutning": "ENDRING",
+                 "periodeListe": []             
+                }
+              ],
+              "sporingsdata":
+                {
+                "correlationId":""            
+                }
+            }
+            """.trimIndent(),
+        )
+        verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
+
+        val hendelser = captor.allValues
+        assertThat(hendelser[0].vedtaksid).isEqualTo(1)
+        assertThat(hendelser[0].vedtakstidspunkt).isEqualTo("2020-01-01T23:34:55.869121094")
+        assertThat(hendelser[0].type).isEqualTo("ALDERSJUSTERING")
+        assertThat(hendelser[0].saksnr).isEqualTo("1234567")
+        assertThat(hendelser[0].skyldner).isEqualTo("98765432109")
+        assertThat(hendelser[0].kravhaver).isEqualTo("12345678901")
+        assertThat(hendelser[0].mottaker).isEqualTo("16498311338")
+        assertThat(hendelser[0].historiskVedtak).isFalse
+        assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(3))
+        assertThat(hendelser[0].bidragPeriodeListe.first().samværsfradrag).isEqualTo(BigDecimal.valueOf(150))
+        assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBM).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPBorMedAndreVoksne).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().samværsklasse).isEqualTo(Samværsklasse.SAMVÆRSKLASSE_2)
     }
 }
