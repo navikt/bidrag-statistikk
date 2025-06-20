@@ -435,12 +435,12 @@ class TestUtil {
             behandlingsreferanseListe = emptyList(),
         )
 
-        fun byggVedtakDtoBidrag(): VedtakDto = VedtakDto(
+        fun byggVedtakDtoBidrag(kildeapplikasjon: String): VedtakDto = VedtakDto(
             kilde = Vedtakskilde.MANUELT,
             type = Vedtakstype.ENDRING,
             opprettetAv = "ABCDEFG",
             opprettetAvNavn = "",
-            kildeapplikasjon = "bidrag-behandling-q2",
+            kildeapplikasjon = kildeapplikasjon,
             vedtakstidspunkt = LocalDateTime.parse("2020-01-01T23:34:55.869121094"),
             unikReferanse = null,
             enhetsnummer = Enhetsnummer("ABCD"),

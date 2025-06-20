@@ -121,7 +121,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         val vedtakErAldersjustering = vedtakHendelse.type == Vedtakstype.ALDERSJUSTERING
         // Spesialinnhenting av grunnlag på aldersjusteringsvedtak skal bare gjøres for vedtak som ikke er fra Bisys.
         // Aldersjusteringsvedtak gjort i Bisys har samme grunnlagsstruktur som ordinære bidragsvedtak.
-        val vedtakFraBisys = vedtakHendelse.kildeapplikasjon.contains(bisys)
+        val vedtakFraBisys = vedtakDto?.kildeapplikasjon?.contains(bisys) ?: false
         vedtakDto?.stønadsendringListe?.filter {
             it.type == Stønadstype.BIDRAG ||
                 it.type == Stønadstype.BIDRAG18AAR ||
@@ -238,7 +238,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             bPsAndelUnderholdskostnad = grunnlagListe.finnBpsAndelUnderholdskostnadForPeriode(
                 vedtakErAldersjustering,
                 vedtakFraBisys,
-                grunnlagsreferanseListe,
+                grunnlagsreferanseListe
             ),
             samværsfradrag = grunnlagListe.finnSamværsfradragForPeriode(grunnlagsreferanseListe),
             nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBP),

@@ -367,7 +367,7 @@ class VedtakHendelseListenerTest {
         assertThat(hendelser[0].skyldner).isEqualTo("98765432109")
         assertThat(hendelser[0].kravhaver).isEqualTo("12345678901")
         assertThat(hendelser[0].mottaker).isEqualTo("16498311338")
-        assertThat(hendelser[0].historiskVedtak).isTrue
+        assertThat(hendelser[0].historiskVedtak).isFalse
         assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isEqualTo(BigDecimal.valueOf(3500))
         assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
         assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(200))
