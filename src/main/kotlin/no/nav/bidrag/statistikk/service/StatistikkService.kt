@@ -54,9 +54,9 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
-//        if (vedtakHendelse.id > 5038461) {
-//            behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
-//        }
+        if (vedtakHendelse.id > 5050998) {
+            behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
+        }
         behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
     }
 
