@@ -402,6 +402,17 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                 beløp = inntekt.innhold.beløp,
             )
         }
+//        val inntekter = filtrerOgKonverterBasertPåFremmedReferanse<InntektsrapporteringPeriode>(
+//            Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE,
+//            referanseTilRolle,
+//        ).filter { it.innhold.valgt }
+//            .filter { it.innhold.gjelderBarn == null || it.innhold.gjelderBarn == søknadsbarnReferanse }
+//        return inntekter.map { inntekt ->
+//            Inntekt(
+//                type = inntekt.innhold.inntektsrapportering.name,
+//                beløp = inntekt.innhold.beløp,
+//            )
+//        }
     }
 
     fun finnReferanseTilRolle(grunnlagListe: List<GrunnlagDto>, grunnlagstype: Grunnlagstype) = grunnlagListe
