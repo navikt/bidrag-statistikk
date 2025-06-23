@@ -814,7 +814,7 @@ class TestUtil {
                             resultatkode = "A",
                             delytelseId = "delytelseId1",
                             grunnlagReferanseListe = listOf(
-                                "sluttberegning_person_PERSON_SØKNADSBARN_20150718_826_202503",
+                                "sluttberegning_person_PERSON_SØKNADSBARN_20150718_826_202501",
                             ),
                         ),
                     ),

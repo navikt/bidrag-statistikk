@@ -219,14 +219,36 @@ class VedtakHendelseListenerTest {
         assertThat(hendelser[0].kravhaver).isEqualTo("12345678901")
         assertThat(hendelser[0].mottaker).isEqualTo("16498311338")
         assertThat(hendelser[0].historiskVedtak).isFalse
+        assertThat(hendelser[0].bidragPeriodeListe.size == 2)
+
+        assertThat(hendelser[0].bidragPeriodeListe.first().beløp).isEqualTo(BigDecimal.valueOf(100))
         assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isEqualTo(BigDecimal.valueOf(3500))
         assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
-        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(200))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(400))
         assertThat(hendelser[0].bidragPeriodeListe.first().samværsfradrag).isEqualTo(BigDecimal.valueOf(150))
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isEqualTo(BigDecimal.valueOf(100))
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBM).isEqualTo(BigDecimal.valueOf(10))
         assertThat(hendelser[0].bidragPeriodeListe.first().bPBorMedAndreVoksne).isTrue
         assertThat(hendelser[0].bidragPeriodeListe.first().samværsklasse).isEqualTo(Samværsklasse.DELT_BOSTED)
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPInntektListe?.first()?.beløp).isEqualTo(BigDecimal.valueOf(2000))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bMInntektListe?.first()?.beløp).isEqualTo(BigDecimal.valueOf(2500))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPInntektListe?.size == 1)
+        assertThat(hendelser[0].bidragPeriodeListe.first().bMInntektListe?.size == 1)
+
+        assertThat(hendelser[0].bidragPeriodeListe[1].beløp).isEqualTo(BigDecimal.valueOf(200))
+        assertThat(hendelser[0].bidragPeriodeListe[1].bidragsevne).isEqualTo(BigDecimal.valueOf(3500))
+        assertThat(hendelser[0].bidragPeriodeListe[1].underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
+        assertThat(hendelser[0].bidragPeriodeListe[1].bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(200))
+        assertThat(hendelser[0].bidragPeriodeListe[1].samværsfradrag).isEqualTo(BigDecimal.valueOf(150))
+        assertThat(hendelser[0].bidragPeriodeListe[1].nettoBarnetilleggBP).isEqualTo(BigDecimal.valueOf(100))
+        assertThat(hendelser[0].bidragPeriodeListe[1].nettoBarnetilleggBM).isEqualTo(BigDecimal.valueOf(10))
+        assertThat(hendelser[0].bidragPeriodeListe[1].bPBorMedAndreVoksne).isTrue
+        assertThat(hendelser[0].bidragPeriodeListe[1].samværsklasse).isEqualTo(Samværsklasse.DELT_BOSTED)
+
+        assertThat(hendelser[0].bidragPeriodeListe[1].bPInntektListe?.first()?.beløp).isEqualTo(BigDecimal.valueOf(2000))
+        assertThat(hendelser[0].bidragPeriodeListe[1].bMInntektListe?.first()?.beløp).isEqualTo(BigDecimal.valueOf(2500))
+        assertThat(hendelser[0].bidragPeriodeListe[1].bPInntektListe?.size == 1)
+        assertThat(hendelser[0].bidragPeriodeListe[1].bMInntektListe?.size == 1)
     }
 
     @Test
@@ -370,7 +392,7 @@ class VedtakHendelseListenerTest {
         assertThat(hendelser[0].historiskVedtak).isTrue
         assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isEqualTo(BigDecimal.valueOf(3500))
         assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
-        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(200))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(400))
         assertThat(hendelser[0].bidragPeriodeListe.first().samværsfradrag).isEqualTo(BigDecimal.valueOf(150))
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isEqualTo(BigDecimal.valueOf(100))
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBM).isEqualTo(BigDecimal.valueOf(10))

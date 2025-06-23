@@ -54,9 +54,9 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
-        if (vedtakHendelse.id > 5038461) {
-            behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
-        }
+//        if (vedtakHendelse.id > 5038461) {
+//            behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
+//        }
         behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
     }
 
@@ -245,8 +245,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBM),
             bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
             samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, vedtakFraBisys, grunnlagsreferanseListe),
-            bPInntektListe = grunnlagListe.finnInntekterBidrag(referanseBP, søknadsbarnReferanse),
-            bMInntektListe = grunnlagListe.finnInntekterBidrag(referanseBM, søknadsbarnReferanse),
+            bPInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBP, søknadsbarnReferanse),
+            bMInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBM, søknadsbarnReferanse),
         )
 
         return respons
@@ -385,12 +385,17 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         }
     }
 
-    fun List<GrunnlagDto>.finnInntekterBidrag(referanseTilRolle: String, søknadsbarnReferanse: String): List<Inntekt>? {
-        val inntekter = filtrerOgKonverterBasertPåFremmedReferanse<InntektsrapporteringPeriode>(
+    fun List<GrunnlagDto>.finnInntekterBidrag(
+        grunnlagsreferanseListe: List<Grunnlagsreferanse>,
+        referanseTilRolle: String,
+        søknadsbarnReferanse: String,
+    ): List<Inntekt>? {
+        val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
+        val inntekter = finnOgKonverterGrunnlagSomErReferertAv<InntektsrapporteringPeriode>(
             Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE,
-            referanseTilRolle,
+            sluttberegning,
         ).filter { it.innhold.valgt }
-            .filter { it.innhold.gjelderBarn == null || it.innhold.gjelderBarn == søknadsbarnReferanse }
+            .filter { it.gjelderReferanse == referanseTilRolle && (it.innhold.gjelderBarn == null || it.innhold.gjelderBarn == søknadsbarnReferanse) }
         return inntekter.map { inntekt ->
             Inntekt(
                 type = inntekt.innhold.inntektsrapportering.name,
