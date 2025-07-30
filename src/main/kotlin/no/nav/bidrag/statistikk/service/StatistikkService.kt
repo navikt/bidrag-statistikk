@@ -64,7 +64,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         vedtakDto?.stønadsendringListe?.filter { it.type == Stønadstype.FORSKUDD && it.beslutning == Beslutningstype.ENDRING }
             ?.forEach { stønadsendring ->
                 val forskuddHendelse = ForskuddHendelse(
-                    vedtaksid = vedtakHendelse.id.toLong(),
+                    vedtaksid = vedtakHendelse.id,
                     vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
                     type = vedtakHendelse.type.name,
                     saksnr = stønadsendring.sak.verdi,
