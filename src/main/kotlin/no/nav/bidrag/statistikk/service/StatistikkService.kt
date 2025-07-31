@@ -130,7 +130,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         }
             ?.forEach { stønadsendring ->
                 val bidragHendelse = BidragHendelse(
-                    vedtaksid = vedtakHendelse.id.toLong(),
+                    vedtaksid = vedtakHendelse.id,
                     vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
                     type = vedtakHendelse.type.name,
                     saksnr = stønadsendring.sak.verdi,

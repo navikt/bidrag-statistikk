@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class BidragHendelse(
-    val vedtaksid: Long,
+    val vedtaksid: Int,
     val vedtakstidspunkt: LocalDateTime,
     val type: String,
     val saksnr: String,
