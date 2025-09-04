@@ -1,5 +1,6 @@
 package no.nav.bidrag.statistikk.service
 
+import no.nav.bidrag.beregn.core.util.justerVedtakstidspunktVedtakshendelse
 import no.nav.bidrag.domene.enums.beregning.Samværsklasse
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.person.Bostatuskode
@@ -24,12 +25,13 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.InntektsrapporteringPe
 import no.nav.bidrag.transport.behandling.felles.grunnlag.KopiSamværsperiodeGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SamværsperiodeGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SivilstandPeriode
+import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningBarnebidrag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningBarnebidragAldersjustering
 import no.nav.bidrag.transport.behandling.felles.grunnlag.SluttberegningForskudd
-import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåFremmedReferanse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnOgKonverterGrunnlagSomErReferertAv
 import no.nav.bidrag.transport.behandling.felles.grunnlag.finnSluttberegningIReferanser
 import no.nav.bidrag.transport.behandling.felles.grunnlag.innholdTilObjekt
+import no.nav.bidrag.transport.behandling.felles.grunnlag.tilInnholdMedReferanse
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddPeriode
 import no.nav.bidrag.transport.behandling.statistikk.Inntekt
@@ -65,7 +67,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             ?.forEach { stønadsendring ->
                 val forskuddHendelse = ForskuddHendelse(
                     vedtaksid = vedtakHendelse.id,
-                    vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
+                    vedtakstidspunkt = vedtakHendelse.justerVedtakstidspunktVedtakshendelse().vedtakstidspunkt,
                     type = vedtakHendelse.type.name,
                     saksnr = stønadsendring.sak.verdi,
                     kravhaver = stønadsendring.kravhaver.verdi,
@@ -131,7 +133,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             ?.forEach { stønadsendring ->
                 val bidragHendelse = BidragHendelse(
                     vedtaksid = vedtakHendelse.id,
-                    vedtakstidspunkt = vedtakHendelse.vedtakstidspunkt,
+                    vedtakstidspunkt = vedtakHendelse.justerVedtakstidspunktVedtakshendelse().vedtakstidspunkt,
                     type = vedtakHendelse.type.name,
                     saksnr = stønadsendring.sak.verdi,
                     skyldner = stønadsendring.skyldner.verdi,
@@ -241,8 +243,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                 grunnlagsreferanseListe,
             ),
             samværsfradrag = grunnlagListe.finnSamværsfradragForPeriode(grunnlagsreferanseListe),
-            nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBP),
-            nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(referanseBM),
+            nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBP),
+            nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBM),
             bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
             samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, vedtakFraBisys, grunnlagsreferanseListe),
             bPInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBP, søknadsbarnReferanse),
@@ -347,11 +349,12 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         return samværsfradrag?.innhold?.beløp
     }
 
-    fun List<GrunnlagDto>.finnNettoBarnetilleggForPeriode(referanseTilRolle: String): BigDecimal? {
-        val nettoBarnetillegg = filtrerOgKonverterBasertPåFremmedReferanse<DelberegningNettoBarnetillegg>(
+    fun List<GrunnlagDto>.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe: List<Grunnlagsreferanse>, referanseTilRolle: String): BigDecimal? {
+        val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
+        val nettoBarnetillegg = finnOgKonverterGrunnlagSomErReferertAv<DelberegningNettoBarnetillegg>(
             Grunnlagstype.DELBEREGNING_NETTO_BARNETILLEGG,
-            referanseTilRolle,
-        ).firstOrNull()
+            sluttberegning,
+        ).firstOrNull { it.gjelderReferanse == referanseTilRolle }
         return nettoBarnetillegg?.innhold?.summertNettoBarnetillegg
     }
 
@@ -391,11 +394,13 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         søknadsbarnReferanse: String,
     ): List<Inntekt>? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
+        val to = sluttberegning.tilInnholdMedReferanse<SluttberegningBarnebidrag>()
         val inntekter = finnOgKonverterGrunnlagSomErReferertAv<InntektsrapporteringPeriode>(
             Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE,
             sluttberegning,
         ).filter { it.innhold.valgt }
             .filter { it.gjelderReferanse == referanseTilRolle && (it.innhold.gjelderBarn == null || it.innhold.gjelderBarn == søknadsbarnReferanse) }
+            .filter { it.innhold.periode.overlapper(to.innhold.periode) }
         return inntekter.map { inntekt ->
             Inntekt(
                 type = inntekt.innhold.inntektsrapportering.name,
