@@ -26,8 +26,8 @@
     <token-support.version>5.0.29</token-support.version>
 
     <!-- dependencies -->
-    <bidrag-felles.version>2025.07.30.123237</bidrag-felles.version>
     <bidrag-beregn-felles.version>2025.08.26.142237</bidrag-beregn-felles.version>
+    <bidrag-felles.version>2025.09.03.151548</bidrag-felles.version>
     <bidrag-tilgangskontroll.version>1.9.22</bidrag-tilgangskontroll.version>
     <mockito-kotlin.version>5.3.1</mockito-kotlin.version>
     <nimbus-jose-jwt.version>9.48</nimbus-jose-jwt.version>
