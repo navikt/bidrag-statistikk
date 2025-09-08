@@ -1004,7 +1004,7 @@ class TestUtil {
 
         fun byggVedtakDtoAldersjusteringBidrag(): VedtakDto = VedtakDto(
             kilde = Vedtakskilde.AUTOMATISK,
-            type = Vedtakstype.ENDRING,
+            type = Vedtakstype.ALDERSJUSTERING,
             opprettetAv = "ABCDEFG",
             opprettetAvNavn = "",
             kildeapplikasjon = "bidrag-automatisk-jobb",
