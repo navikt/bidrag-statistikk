@@ -56,10 +56,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
-        val vedtakDto = hentVedtak(vedtakHendelse.id)
-
-        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
-        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
         val sakSkalBehandlesPåNytt = vedtakHendelse.stønadsendringListe?.any {
             it.sak in setOf(
@@ -71,11 +67,24 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         } ?: false
 
         if (vedtakHendelse.id > 5123578) {
+            val vedtakDto = hentVedtak(vedtakHendelse.id)
+            LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
+            SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
         if (vedtakHendelse.id > 5123568 || sakSkalBehandlesPåNytt) {
+            val vedtakDto = hentVedtak(vedtakHendelse.id)
+            LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
+            SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
             behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
         }
+
+//        val vedtakDto = hentVedtak(vedtakHendelse.id)
+
+//        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
+//        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
+
+
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
