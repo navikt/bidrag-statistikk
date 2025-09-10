@@ -185,7 +185,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ENDRING",
-              "id":"1",
+              "id":"99999999",
               "opprettetAv":"ABCDEFG",
               "kildeapplikasjon":"bidrag-behandling",              
               "vedtakstidspunkt":"2020-01-01T23:34:55.869121094",              
@@ -213,7 +213,7 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
 
         val hendelser = captor.allValues
-        assertThat(hendelser[0].vedtaksid).isEqualTo(1)
+        assertThat(hendelser[0].vedtaksid).isEqualTo(99999999)
         assertThat(hendelser[0].vedtakstidspunkt).isEqualTo("2020-01-01T23:34:55.869121094")
         assertThat(hendelser[0].type).isEqualTo("ENDRING")
         assertThat(hendelser[0].saksnr).isEqualTo("1234567")
@@ -303,7 +303,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"AUTOMATISK",
               "type":"ALDERSJUSTERING",
-              "id":"1",
+              "id":"99999999",
               "opprettetAv":"ABCDEFG",
               "kildeapplikasjon":"bidrag-automatisk-jobb",              
               "vedtakstidspunkt":"2020-01-01T23:34:55.869121094",              
@@ -331,7 +331,7 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
 
         val hendelser = captor.allValues
-        assertThat(hendelser[0].vedtaksid).isEqualTo(1)
+        assertThat(hendelser[0].vedtaksid).isEqualTo(99999999)
         assertThat(hendelser[0].vedtakstidspunkt).isEqualTo("2020-01-01T23:34:55.869121094")
         assertThat(hendelser[0].type).isEqualTo("ALDERSJUSTERING")
         assertThat(hendelser[0].saksnr).isEqualTo("1234567")
@@ -358,7 +358,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"AUTOMATISK",
               "type":"ALDERSJUSTERING",
-              "id":"1",
+              "id":"99999999",
               "opprettetAv":"ABCDEFG",
               "kildeapplikasjon":"bisys",              
               "vedtakstidspunkt":"2020-01-01T23:34:55.869121094",              
@@ -386,7 +386,7 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
 
         val hendelser = captor.allValues
-        assertThat(hendelser[0].vedtaksid).isEqualTo(1)
+        assertThat(hendelser[0].vedtaksid).isEqualTo(99999999)
         assertThat(hendelser[0].vedtakstidspunkt).isEqualTo("2020-01-02T00:34:55.869121094")
         assertThat(hendelser[0].type).isEqualTo("ALDERSJUSTERING")
         assertThat(hendelser[0].saksnr).isEqualTo("1234567")
@@ -413,7 +413,7 @@ class VedtakHendelseListenerTest {
             {
               "kilde":"MANUELT",
               "type":"ENDRING",
-              "id":"1",
+              "id":"99999999",
               "opprettetAv":"ABCDEFG",
               "kildeapplikasjon":"bidrag-behandling",              
               "vedtakstidspunkt":"2025-08-27T11:00:00.000001",              
@@ -441,7 +441,7 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
 
         val hendelser = captor.allValues
-        assertThat(hendelser[0].vedtaksid).isEqualTo(1)
+        assertThat(hendelser[0].vedtaksid).isEqualTo(99999999)
         assertThat(hendelser[0].vedtakstidspunkt).isEqualTo("2025-08-27T11:00:00.000001")
         assertThat(hendelser[0].type).isEqualTo("ENDRING")
         assertThat(hendelser[0].saksnr).isEqualTo("1234567")

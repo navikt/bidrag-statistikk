@@ -66,7 +66,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                 Saksnummer("0611098"),
                 Saksnummer("1210712"),
                 Saksnummer("2306758"),
-                Saksnummer("2308609")
+                Saksnummer("2308609"),
             )
         } ?: false
 
