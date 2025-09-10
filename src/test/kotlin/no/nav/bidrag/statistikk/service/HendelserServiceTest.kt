@@ -3,6 +3,7 @@ package no.nav.bidrag.statistikk.service
 import no.nav.bidrag.domene.enums.beregning.Samværsklasse
 import no.nav.bidrag.domene.enums.inntekt.Inntektsrapportering
 import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.statistikk.BidragStatistikkTest
 import no.nav.bidrag.statistikk.bo.BidragHendelse
@@ -79,12 +80,14 @@ class HendelserServiceTest {
             BidragHendelse(
                 vedtaksid = 1,
                 vedtakstidspunkt = LocalDateTime.now(),
+                stønadstype = Stønadstype.BIDRAG,
                 type = Vedtakstype.ENDRING.name,
                 saksnr = "123",
                 skyldner = "23456",
                 kravhaver = "12345",
                 mottaker = "54321",
                 historiskVedtak = false,
+                innkreving = true,
                 bidragPeriodeListe = listOf(
                     BidragPeriode(
                         periodeFra = LocalDate.of(2021, 1, 1),
@@ -94,6 +97,8 @@ class HendelserServiceTest {
                         bidragsevne = BigDecimal(1000),
                         underholdskostnad = BigDecimal(1000),
                         bPsAndelUnderholdskostnad = BigDecimal(1000),
+                        nettoTilsynsutgift = BigDecimal(1000),
+                        faktiskUtgift = BigDecimal(1000),
                         samværsfradrag = BigDecimal(1000),
                         nettoBarnetilleggBP = BigDecimal(1000),
                         nettoBarnetilleggBM = BigDecimal(1000),

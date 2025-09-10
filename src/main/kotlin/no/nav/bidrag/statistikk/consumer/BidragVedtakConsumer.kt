@@ -15,7 +15,7 @@ class BidragVedtakConsumer(@Value("\${BIDRAG_VEDTAK_URL}") private val bidragVed
     private val bidragVedtakUri
         get() = UriComponentsBuilder.fromUri(bidragVedtakUrl).pathSegment("vedtak")
 
-    fun hentVedtak(vedtakId: Long): VedtakDto? = getForEntity(
+    fun hentVedtak(vedtakId: Int): VedtakDto? = getForEntity(
         bidragVedtakUri.pathSegment(vedtakId.toString()).build().toUri(),
     )
 }
