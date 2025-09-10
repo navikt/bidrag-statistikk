@@ -8,6 +8,7 @@ import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
 import no.nav.bidrag.domene.enums.vedtak.Innkrevingstype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.domene.sak.Saksnummer
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.bo.BidragHendelse
 import no.nav.bidrag.statistikk.bo.BidragPeriode
@@ -60,10 +61,21 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
-        if (vedtakHendelse.id > 5050998) {
+        val sakSkalBehandlesPåNytt = vedtakHendelse.stønadsendringListe?.any {
+            it.sak in setOf(
+                Saksnummer("0611098"),
+                Saksnummer("1210712"),
+                Saksnummer("2306758"),
+                Saksnummer("2308609")
+            )
+        } ?: false
+
+        if (vedtakHendelse.id > 5123578) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
+        if (vedtakHendelse.id > 5123568 || sakSkalBehandlesPåNytt) {
+            behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
+        }
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
