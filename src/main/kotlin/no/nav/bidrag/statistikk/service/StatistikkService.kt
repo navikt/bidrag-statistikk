@@ -38,6 +38,9 @@ import no.nav.bidrag.transport.behandling.statistikk.ForskuddPeriode
 import no.nav.bidrag.transport.behandling.statistikk.Inntekt
 import no.nav.bidrag.transport.behandling.vedtak.VedtakHendelse
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.behandling.vedtak.response.erDelvedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.referertVedtaksid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -52,7 +55,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
-        val vedtakDto = hentVedtak(vedtakHendelse.id.toLong())
+        val vedtakDto = hentVedtak(vedtakHendelse.id)
 
         LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
@@ -200,7 +203,23 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             }
     }
 
-    fun hentVedtak(vedtaksid: Long): VedtakDto? = bidragVedtakConsumer.hentVedtak(vedtaksid)
+    fun hentVedtak(vedtaksid: Int): VedtakDto? {
+        val vedtak = bidragVedtakConsumer.hentVedtak(vedtaksid) ?: return null
+        if (vedtak.erDelvedtak || vedtak.erOrkestrertVedtak && vedtak.type == Vedtakstype.INNKREVING) return null
+        val faktiskVedtak =
+            if (vedtak.erOrkestrertVedtak) {
+                bidragVedtakConsumer.hentVedtak(vedtak.referertVedtaksid!!)
+            } else {
+                vedtak
+            } ?: return null
+        if (faktiskVedtak.grunnlagListe.isEmpty()) {
+            LOGGER.info("Vedtak $vedtaksid fattet av system ${vedtak.kildeapplikasjon} mangler grunnlag")
+            SECURE_LOGGER.info("Vedtak fattet av system ${vedtak.kildeapplikasjon} mangler grunnlag. Vedta: $vedtak")
+
+            return null
+        }
+        return faktiskVedtak
+    }
 
     private fun finnGrunnlagsdataForskudd(
         grunnlagListe: List<GrunnlagDto>,
@@ -238,25 +257,42 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         val referanseBM = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_BIDRAGSMOTTAKER)
         val søknadsbarnReferanse = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_SØKNADSBARN)
 
-        // Finn grunnlagsdata
-        val respons = GrunnlagsdataBidrag(
-            bidragsevne = grunnlagListe.finnBidragevneForPeriode(grunnlagsreferanseListe),
-            underholdskostnad = grunnlagListe.finnUnderholdskostnadForPeriode(grunnlagsreferanseListe),
-            bPsAndelUnderholdskostnad = grunnlagListe.finnBpsAndelUnderholdskostnadForPeriode(
-                vedtakErAldersjustering,
-                vedtakFraBisys,
-                grunnlagsreferanseListe,
-            ),
-            nettoTilsynsutgift = grunnlagListe.finnNettoTilsynsutgiftForPeriode(grunnlagsreferanseListe),
-            faktiskUtgift = grunnlagListe.finnFaktiskUtgiftForPeriode(grunnlagsreferanseListe),
-            samværsfradrag = grunnlagListe.finnSamværsfradragForPeriode(grunnlagsreferanseListe),
-            nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBP),
-            nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBM),
-            bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
-            samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, vedtakFraBisys, grunnlagsreferanseListe),
-            bPInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBP, søknadsbarnReferanse),
-            bMInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBM, søknadsbarnReferanse),
-        )
+        // Finn grunnlagsdata. For vedtak fra Bisys returneres ikke grunnlagsdata enn så lenge pga dårlig datakvalitet i grunnlagsoverføring
+        val respons = if (vedtakFraBisys) {
+            GrunnlagsdataBidrag(
+                bidragsevne = null,
+                underholdskostnad = null,
+                bPsAndelUnderholdskostnad = null,
+                nettoTilsynsutgift = null,
+                faktiskUtgift = null,
+                samværsfradrag = null,
+                nettoBarnetilleggBP = null,
+                nettoBarnetilleggBM = null,
+                bPBorMedAndreVoksne = null,
+                samværsklasse = null,
+                bPInntektListe = null,
+                bMInntektListe = null,
+            )
+        } else {
+            GrunnlagsdataBidrag(
+                bidragsevne = grunnlagListe.finnBidragevneForPeriode(grunnlagsreferanseListe),
+                underholdskostnad = grunnlagListe.finnUnderholdskostnadForPeriode(grunnlagsreferanseListe),
+                bPsAndelUnderholdskostnad = grunnlagListe.finnBpsAndelUnderholdskostnadForPeriode(
+                    vedtakErAldersjustering,
+                    vedtakFraBisys,
+                    grunnlagsreferanseListe,
+                ),
+                nettoTilsynsutgift = grunnlagListe.finnNettoTilsynsutgiftForPeriode(grunnlagsreferanseListe),
+                faktiskUtgift = grunnlagListe.finnFaktiskUtgiftForPeriode(grunnlagsreferanseListe),
+                samværsfradrag = grunnlagListe.finnSamværsfradragForPeriode(grunnlagsreferanseListe),
+                nettoBarnetilleggBP = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBP),
+                nettoBarnetilleggBM = grunnlagListe.finnNettoBarnetilleggForPeriode(grunnlagsreferanseListe, referanseBM),
+                bPBorMedAndreVoksne = grunnlagListe.finnBPBorMedAndreVoksneIPeriode(grunnlagsreferanseListe),
+                samværsklasse = grunnlagListe.finnSamværsklasseIPeriode(vedtakErAldersjustering, vedtakFraBisys, grunnlagsreferanseListe),
+                bPInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBP, søknadsbarnReferanse),
+                bMInntektListe = grunnlagListe.finnInntekterBidrag(grunnlagsreferanseListe, referanseBM, søknadsbarnReferanse),
+            )
+        }
 
         return respons
     }
@@ -421,13 +457,11 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         søknadsbarnReferanse: String,
     ): List<Inntekt>? {
         val sluttberegning = finnSluttberegningIReferanser(grunnlagsreferanseListe) ?: return null
-//        val to = sluttberegning.tilInnholdMedReferanse<SluttberegningBarnebidrag>()
         val inntekter = finnOgKonverterGrunnlagSomErReferertAv<InntektsrapporteringPeriode>(
             Grunnlagstype.INNTEKT_RAPPORTERING_PERIODE,
             sluttberegning,
         ).filter { it.innhold.valgt }
             .filter { it.gjelderReferanse == referanseTilRolle && (it.innhold.gjelderBarn == null || it.innhold.gjelderBarn == søknadsbarnReferanse) }
-//            .filter { it.innhold.periode.overlapper(to.innhold.periode) }
         return inntekter.map { inntekt ->
             Inntekt(
                 type = inntekt.innhold.inntektsrapportering.name,

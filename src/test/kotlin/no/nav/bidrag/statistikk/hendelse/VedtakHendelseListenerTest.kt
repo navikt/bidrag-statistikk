@@ -106,7 +106,7 @@ class VedtakHendelseListenerTest {
     }
 
     @Test
-    fun `skal lese vedtakshendelse Forskudd uten grunnlag uten feil`() {
+    fun `skal lese vedtakshendelse Forskudd uten grunnlag og sjekke at det ikke produseres hendelse`() {
         stubHenteVedtak(byggVedtakDtoUtenGrunnlag())
         vedtakHendelseListener.lesHendelse(
             """
@@ -148,7 +148,7 @@ class VedtakHendelseListenerTest {
             }
             """.trimIndent(),
         )
-        verify(statistikkKafkaEventProducerMock, times(1)).publishForskudd(anyOrNull())
+        verify(statistikkKafkaEventProducerMock, times(0)).publishForskudd(anyOrNull())
     }
 
     @Test
@@ -290,9 +290,8 @@ class VedtakHendelseListenerTest {
             }
             """.trimIndent(),
         )
-        verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
+        verify(statistikkKafkaEventProducerMock, times(0)).publishBidrag(captor.capture())
         val hendelser = captor.allValues
-        assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isNull()
     }
 
     @Test
@@ -395,14 +394,14 @@ class VedtakHendelseListenerTest {
         assertThat(hendelser[0].kravhaver).isEqualTo("12345678901")
         assertThat(hendelser[0].mottaker).isEqualTo("16498311338")
         assertThat(hendelser[0].historiskVedtak).isTrue
-        assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isEqualTo(BigDecimal.valueOf(3500))
-        assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isEqualTo(BigDecimal.valueOf(500))
-        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isEqualTo(BigDecimal.valueOf(400))
-        assertThat(hendelser[0].bidragPeriodeListe.first().samværsfradrag).isEqualTo(BigDecimal.valueOf(150))
-        assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isEqualTo(BigDecimal.valueOf(500))
+        assertThat(hendelser[0].bidragPeriodeListe.first().bidragsevne).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().underholdskostnad).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPsAndelUnderholdskostnad).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().samværsfradrag).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBP).isNull()
         assertThat(hendelser[0].bidragPeriodeListe.first().nettoBarnetilleggBM).isNull()
-        assertThat(hendelser[0].bidragPeriodeListe.first().bPBorMedAndreVoksne).isTrue
-        assertThat(hendelser[0].bidragPeriodeListe.first().samværsklasse).isEqualTo(Samværsklasse.DELT_BOSTED)
+        assertThat(hendelser[0].bidragPeriodeListe.first().bPBorMedAndreVoksne).isNull()
+        assertThat(hendelser[0].bidragPeriodeListe.first().samværsklasse).isNull()
     }
 
     @Test
