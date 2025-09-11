@@ -56,7 +56,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
-
         val sakSkalBehandlesPåNytt = vedtakHendelse.stønadsendringListe?.any {
             it.sak in setOf(
                 Saksnummer("0611098"),
@@ -66,13 +65,13 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         } ?: false
 
-        if (vedtakHendelse.id > 5123578) {
+        if (vedtakHendelse.id > 5123782) {
             val vedtakDto = hentVedtak(vedtakHendelse.id)
             LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
             SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        if (vedtakHendelse.id > 5123568 || sakSkalBehandlesPåNytt) {
+        if (vedtakHendelse.id > 5123782 || sakSkalBehandlesPåNytt) {
             val vedtakDto = hentVedtak(vedtakHendelse.id)
             LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
             SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
@@ -83,8 +82,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
 //        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
 //        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
-
-
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
@@ -233,12 +230,12 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             } else {
                 vedtak
             } ?: return null
-        if (faktiskVedtak.grunnlagListe.isEmpty()) {
+/*        if (faktiskVedtak.grunnlagListe.isEmpty()) {
             LOGGER.info("Vedtak $vedtaksid fattet av system ${vedtak.kildeapplikasjon} mangler grunnlag")
-            SECURE_LOGGER.info("Vedtak fattet av system ${vedtak.kildeapplikasjon} mangler grunnlag. Vedta: $vedtak")
+            SECURE_LOGGER.info("Vedtak fattet av system ${vedtak.kildeapplikasjon} mangler grunnlag. Vedtak: $vedtak")
 
             return null
-        }
+        }*/
         return faktiskVedtak
     }
 
