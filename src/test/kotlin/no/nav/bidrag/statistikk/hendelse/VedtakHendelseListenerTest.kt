@@ -258,7 +258,7 @@ class VedtakHendelseListenerTest {
     }
 
     @Test
-    fun `skal ikke behandle hendelse Bidrag hvis vedtak ikke inneholder grunnlag`() {
+    fun `skal behandle hendelse Bidrag uten grunnlag`() {
         val captor = argumentCaptor<BidragHendelse>()
         stubHenteVedtak(byggVedtakDtoBidragUtenGrunnlag())
         vedtakHendelseListener.lesHendelse(
@@ -291,7 +291,7 @@ class VedtakHendelseListenerTest {
             }
             """.trimIndent(),
         )
-        verify(statistikkKafkaEventProducerMock, times(0)).publishBidrag(captor.capture())
+        verify(statistikkKafkaEventProducerMock, times(1)).publishBidrag(captor.capture())
         val hendelser = captor.allValues
     }
 

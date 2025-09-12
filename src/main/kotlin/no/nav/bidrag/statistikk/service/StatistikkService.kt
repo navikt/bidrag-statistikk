@@ -8,7 +8,6 @@ import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
 import no.nav.bidrag.domene.enums.vedtak.Innkrevingstype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
-import no.nav.bidrag.domene.sak.Saksnummer
 import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.bo.BidragHendelse
 import no.nav.bidrag.statistikk.bo.BidragPeriode
@@ -56,32 +55,24 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
 
     // Behandler mottatt vedtak og sender videre på statistikk-topic
     fun behandleVedtakshendelse(vedtakHendelse: VedtakHendelse) {
-        val sakSkalBehandlesPåNytt = vedtakHendelse.stønadsendringListe?.any {
+/*        val sakSkalBehandlesPåNytt = vedtakHendelse.stønadsendringListe?.any {
             it.sak in setOf(
                 Saksnummer("0611098"),
                 Saksnummer("1210712"),
                 Saksnummer("2306758"),
                 Saksnummer("2308609"),
             )
-        } ?: false
+        } ?: false*/
 
-        if (vedtakHendelse.id > 5123782) {
-            val vedtakDto = hentVedtak(vedtakHendelse.id)
-            LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
-            SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
+        val vedtakDto = hentVedtak(vedtakHendelse.id)
+
+        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
+        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
+
+        if (vedtakHendelse.id > 5050998) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        if (vedtakHendelse.id > 5123782 || sakSkalBehandlesPåNytt) {
-            val vedtakDto = hentVedtak(vedtakHendelse.id)
-            LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
-            SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
-            behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
-        }
-
-//        val vedtakDto = hentVedtak(vedtakHendelse.id)
-
-//        LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
-//        SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
+        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
