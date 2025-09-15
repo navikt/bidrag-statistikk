@@ -64,12 +64,20 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         } ?: false*/
 
+        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
+
+        if (forskuddsvedtak && vedtakHendelse.id < 5124322) {
+            LOGGER.info("Forskuddsvedtak med vedtaksid ${vedtakHendelse.id} lavere enn 5124321 er allerede behandlet")
+            SECURE_LOGGER.debug("Forskuddsvedtak med vedtaksid ${vedtakHendelse.id} lavere enn 5124321 er allerede behandlet")
+            return
+        }
+
         val vedtakDto = hentVedtak(vedtakHendelse.id)
 
         LOGGER.info("Henter komplett vedtak for vedtaksid: ${vedtakHendelse.id}")
         SECURE_LOGGER.debug("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
-        if (vedtakHendelse.id > 5050998) {
+        if (vedtakHendelse.id > 5124321) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
         behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
