@@ -157,9 +157,11 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         // Aldersjusteringsvedtak gjort i Bisys har samme grunnlagsstruktur som ordinære bidragsvedtak.
         val vedtakFraBisys = vedtakHendelse.kildeapplikasjon.contains(bisys)
         vedtakDto?.stønadsendringListe?.filter {
-            it.type == Stønadstype.BIDRAG ||
-                it.type == Stønadstype.BIDRAG18AAR ||
-                it.type == Stønadstype.OPPFOSTRINGSBIDRAG &&
+            (
+                it.type == Stønadstype.BIDRAG ||
+                    it.type == Stønadstype.BIDRAG18AAR ||
+                    it.type == Stønadstype.OPPFOSTRINGSBIDRAG
+                ) &&
                 it.beslutning == Beslutningstype.ENDRING
         }
             ?.forEach { stønadsendring ->
