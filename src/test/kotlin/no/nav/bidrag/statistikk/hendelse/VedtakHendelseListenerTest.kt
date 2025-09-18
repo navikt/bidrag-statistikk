@@ -60,7 +60,6 @@ class VedtakHendelseListenerTest {
         every { kafkaTemplate.afterSingletonsInstantiated() } returns Unit
     }
 
-    @Disabled
     @Test
     fun `skal lese vedtakshendelse Forskudd uten feil`() {
         stubHenteVedtak(byggVedtakDtoForskudd())
@@ -107,7 +106,6 @@ class VedtakHendelseListenerTest {
         verify(statistikkKafkaEventProducerMock, times(2)).publishForskudd(anyOrNull())
     }
 
-    @Disabled
     @Test
     fun `skal lese vedtakshendelse Forskudd uten grunnlag og sjekke at det fortsatt produseres hendelse`() {
         stubHenteVedtak(byggVedtakDtoUtenGrunnlag())
