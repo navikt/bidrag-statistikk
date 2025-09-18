@@ -24,6 +24,7 @@ open class PojoVedtakHendelseListener(
             LOGGER.error(e) { "Behandling av vedtakshendelse feilet, se sikker logg for mer info" }
             SECURE_LOGGER.error(
                 "Behandling av vedtakshendelse feilet for: $hendelse",
+                e,
             )
             throw e
         }

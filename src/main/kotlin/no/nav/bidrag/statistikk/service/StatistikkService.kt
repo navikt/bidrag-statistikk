@@ -64,7 +64,18 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         } ?: false*/
 
-        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
+        val vedtakSkalBehandles = vedtakHendelse.id in setOf(123361, 123366, 123371, 123408, 999999999)
+
+        if (vedtakSkalBehandles) {
+            LOGGER.info("Vedtak med vedtaksid ${vedtakHendelse.id} skal behandles på nytt")
+            SECURE_LOGGER.info("Vedtak med vedtaksid ${vedtakHendelse.id} skal behandles på nytt")
+            val vedtakDto = hentVedtak(vedtakHendelse.id)
+            SECURE_LOGGER.info("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
+
+            behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
+        }
+
+/*        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
 
         if (forskuddsvedtak && vedtakHendelse.id < 5124322) {
             LOGGER.info("Forskuddsvedtak med vedtaksid ${vedtakHendelse.id} lavere enn 5124321 er allerede behandlet")
@@ -80,7 +91,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         if (vedtakHendelse.id > 5124321) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
+        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)*/
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
@@ -200,6 +211,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                                 )
                             },
                             beløp = periode.beløp,
+                            valutakode = periode.valutakode,
                             resultat = periode.resultatkode,
                             bidragsevne = grunnlagsdata?.bidragsevne,
                             underholdskostnad = grunnlagsdata?.underholdskostnad,
@@ -270,10 +282,6 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             return null
         }
 
-        val referanseBP = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_BIDRAGSPLIKTIG)
-        val referanseBM = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_BIDRAGSMOTTAKER)
-        val søknadsbarnReferanse = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_SØKNADSBARN)
-
         // Finn grunnlagsdata. For vedtak fra Bisys returneres ikke grunnlagsdata enn så lenge pga dårlig datakvalitet i grunnlagsoverføring
         val respons = if (vedtakFraBisys) {
             GrunnlagsdataBidrag(
@@ -291,6 +299,10 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
                 bMInntektListe = null,
             )
         } else {
+            val referanseBP = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_BIDRAGSPLIKTIG)
+            val referanseBM = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_BIDRAGSMOTTAKER)
+            val søknadsbarnReferanse = finnReferanseTilRolle(grunnlagListe, Grunnlagstype.PERSON_SØKNADSBARN)
+
             GrunnlagsdataBidrag(
                 bidragsevne = grunnlagListe.finnBidragevneForPeriode(grunnlagsreferanseListe),
                 underholdskostnad = grunnlagListe.finnUnderholdskostnadForPeriode(grunnlagsreferanseListe),

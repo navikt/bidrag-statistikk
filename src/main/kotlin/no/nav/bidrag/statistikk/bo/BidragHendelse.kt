@@ -25,6 +25,7 @@ data class BidragPeriode(
     val periodeFra: LocalDate,
     val periodeTil: LocalDate?,
     val beløp: BigDecimal?,
+    val valutakode: String?,
     val resultat: String,
     val bidragsevne: BigDecimal?,
     val underholdskostnad: BigDecimal?,
