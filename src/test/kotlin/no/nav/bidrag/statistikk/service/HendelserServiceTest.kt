@@ -93,6 +93,7 @@ class HendelserServiceTest {
                         periodeFra = LocalDate.of(2021, 1, 1),
                         periodeTil = LocalDate.of(2022, 1, 1),
                         beløp = BigDecimal(1000),
+                        valutakode = "NOK",
                         resultat = Beslutningstype.ENDRING.name,
                         bidragsevne = BigDecimal(1000),
                         underholdskostnad = BigDecimal(1000),

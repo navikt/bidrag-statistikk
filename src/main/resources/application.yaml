@@ -48,6 +48,8 @@ spring:
       enable-auto-commit: false
     listener:
       ackMode: record
+    producer:
+      acks: all
 
   config.activate.on-profile: "live"
 no.nav.security.jwt:

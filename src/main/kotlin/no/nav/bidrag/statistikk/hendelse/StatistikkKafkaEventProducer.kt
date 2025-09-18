@@ -41,7 +41,7 @@ class StatistikkKafkaEventProducer(
     }
 
     fun publishBidrag(bidragHendelse: BidragHendelse): Long? {
-        val headers = listOf(RecordHeader("stønadstype", "BIDRAG".toByteArray()))
+        val headers = listOf(RecordHeader("stønadstype", bidragHendelse.stønadstype.toString().toByteArray()))
         val record = ProducerRecord(
             topicBidrag,
             null,
