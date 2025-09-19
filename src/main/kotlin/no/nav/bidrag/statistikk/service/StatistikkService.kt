@@ -64,7 +64,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         } ?: false*/
 
-/*        val vedtakSkalBehandles = vedtakHendelse.id in setOf(123361, 123366, 123371, 123408, 999999999)
+        val vedtakSkalBehandles = vedtakHendelse.id in setOf(130223, 131012, 131132, 162374, 165952, 404037, 417293, 444607, 999999999)
 
         if (vedtakSkalBehandles) {
             LOGGER.info("Vedtak med vedtaksid ${vedtakHendelse.id} skal behandles på nytt")
@@ -73,9 +73,9 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             SECURE_LOGGER.info("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
             behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
-        }*/
+        }
 
-        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
+/*        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
 
         if (forskuddsvedtak && vedtakHendelse.id < 5124884) {
             LOGGER.info("Forskuddsvedtak med vedtaksid ${vedtakHendelse.id} lavere enn 5124884 er allerede behandlet")
@@ -91,7 +91,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         if (vedtakHendelse.id > 5124883) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
+        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)*/
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
