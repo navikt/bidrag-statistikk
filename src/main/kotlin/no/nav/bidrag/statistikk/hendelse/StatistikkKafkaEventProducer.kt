@@ -2,6 +2,7 @@ package no.nav.bidrag.statistikk.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.bidrag.statistikk.SECURE_LOGGER
 import no.nav.bidrag.statistikk.bo.BidragHendelse
 import no.nav.bidrag.transport.behandling.statistikk.ForskuddHendelse
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -35,7 +36,7 @@ class StatistikkKafkaEventProducer(
                 record,
             ).get().recordMetadata.offset()
         } catch (e: Exception) {
-            LOGGER.error(e) { "Det skjedde en feil ved sending av kafkamelding med forskuddsvedtak, $record" }
+            SECURE_LOGGER.error("Det skjedde en feil ved sending av kafkamelding med forskuddsvedtak, $record. Exception: $e")
             throw IllegalStateException(e.message, e)
         }
     }
@@ -45,7 +46,7 @@ class StatistikkKafkaEventProducer(
         val record = ProducerRecord(
             topicBidrag,
             null,
-            bidragHendelse.vedtaksid.toString() + bidragHendelse.kravhaver,
+            bidragHendelse.vedtaksid.toString() + bidragHendelse.kravhaver + bidragHendelse.stønadstype,
             objectMapper.writeValueAsString(bidragHendelse),
             headers,
         )
@@ -55,7 +56,7 @@ class StatistikkKafkaEventProducer(
                 record,
             ).get().recordMetadata.offset()
         } catch (e: Exception) {
-            LOGGER.error(e) { "Det skjedde en feil ved sending av kafkamelding med bidragsvedtak, $record" }
+            SECURE_LOGGER.error("Det skjedde en feil ved sending av kafkamelding med bidragsvedtak, $record. Exception: $e")
             throw IllegalStateException(e.message, e)
         }
     }

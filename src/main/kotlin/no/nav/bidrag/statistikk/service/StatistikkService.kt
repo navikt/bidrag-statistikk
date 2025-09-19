@@ -64,41 +64,8 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             )
         } ?: false*/
 
-        val vedtakSkalBehandles = vedtakHendelse.id in setOf(
-            130221, 130222,
-            130223,
-            130224,
-            //
-            131010, 131011,
-            131012,
-            131013,
-            //
-            131130, 131131,
-            131132,
-            131133,
-//
-            162372, 162373,
-            162374,
-            162375,
-//
-            165950, 165951,
-            165952,
-            165953,
-//
-            404035, 404036,
-            404037,
-            404038,
-//
-            417291, 417292,
-            417293,
-            417294,
-//
-            444605, 444606,
-            444607,
-            444608,
-//
-            999999999,
-        )
+/*        val vedtakSkalBehandles = vedtakHendelse.id in setOf(
+            130221, 130222, 130223, 130224, 131012, 131011, 131012, 131132, 162374, 165952, 404037, 417293, 444607, 999999999)
 
         if (vedtakSkalBehandles) {
             LOGGER.info("Vedtak med vedtaksid ${vedtakHendelse.id} skal behandles på nytt")
@@ -107,9 +74,9 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
             SECURE_LOGGER.info("Henter komplett vedtak for vedtaksid: {} vedtak: {}", vedtakHendelse.id, vedtakDto)
 
             behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
-        }
+        }*/
 
-/*        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
+        val forskuddsvedtak = vedtakHendelse.stønadsendringListe?.all { it.type == Stønadstype.FORSKUDD } ?: false
 
         if (forskuddsvedtak && vedtakHendelse.id < 5124884) {
             LOGGER.info("Forskuddsvedtak med vedtaksid ${vedtakHendelse.id} lavere enn 5124884 er allerede behandlet")
@@ -125,7 +92,7 @@ class StatistikkService(val hendelserService: HendelserService, val bidragVedtak
         if (vedtakHendelse.id > 5124883) {
             behandleVedtakHendelseForskudd(vedtakHendelse, vedtakDto)
         }
-        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)*/
+        behandleVedtakHendelseBidrag(vedtakHendelse, vedtakDto)
     }
 
     private fun behandleVedtakHendelseForskudd(vedtakHendelse: VedtakHendelse, vedtakDto: VedtakDto?) {
